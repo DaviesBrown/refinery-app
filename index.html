@@ -1,0 +1,2565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refinery Unit Logbook</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #1a1a1a;
+            --color-text: #000;
+            --color-bg: #f5f5f5;
+            --color-white: #fff;
+            --color-red: #d32f2f;
+            --color-amber: #f57c00;
+            --color-green: #388e3c;
+            --color-blue: #1976d2;
+            --color-gray: #757575;
+            --color-light-gray: #e0e0e0;
+            --color-border: #bdbdbd;
+            --font-size-large: 1.25rem;
+            --font-size-normal: 1rem;
+            --font-size-small: 0.875rem;
+            --touch-target: 48px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .header-title {
+            font-size: var(--font-size-large);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header-time {
+            font-size: var(--font-size-small);
+            color: #b0b0b0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sync-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--color-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .sync-indicator.offline {
+            background-color: var(--color-amber);
+        }
+
+        .sync-indicator.syncing {
+            background-color: var(--color-blue);
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: var(--color-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: var(--font-size-small);
+        }
+
+        .user-name {
+            font-size: var(--font-size-small);
+            font-weight: 600;
+        }
+
+        /* Main Content Area */
+        .app-container {
+            margin-top: 70px;
+            margin-bottom: 80px;
+            padding: 16px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Alerts Section */
+        .alerts-section {
+            margin-bottom: 24px;
+        }
+
+        .alerts-title {
+            font-size: var(--font-size-small);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-gray);
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+
+        .alert-card {
+            background-color: var(--color-white);
+            border-left: 5px solid;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-card.critical {
+            border-left-color: var(--color-red);
+            background-color: #ffebee;
+        }
+
+        .alert-card.warning {
+            border-left-color: var(--color-amber);
+            background-color: #fff3e0;
+        }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .alert-title {
+            font-weight: 700;
+            font-size: var(--font-size-normal);
+            flex: 1;
+        }
+
+        .alert-badge {
+            font-size: var(--font-size-small);
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            margin-left: 8px;
+        }
+
+        .alert-badge.critical {
+            background-color: var(--color-red);
+            color: var(--color-white);
+        }
+
+        .alert-badge.warning {
+            background-color: var(--color-amber);
+            color: var(--color-white);
+        }
+
+        .alert-description {
+            font-size: var(--font-size-small);
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        .alert-reporter {
+            font-size: var(--font-size-small);
+            color: var(--color-gray);
+        }
+
+        /* Quick Actions Grid */
+        .actions-section {
+            margin-bottom: 24px;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .action-button {
+            background-color: var(--color-white);
+            border: 2px solid var(--color-border);
+            padding: 20px 16px;
+            border-radius: 4px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            font-size: var(--font-size-normal);
+            font-weight: 600;
+            transition: all 0.2s ease;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .action-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-button:hover {
+            border-color: var(--color-text);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-button.add-new {
+            background-color: var(--color-blue);
+            color: var(--color-white);
+            border-color: var(--color-blue);
+            grid-column: 1 / -1;
+            min-height: 56px;
+        }
+
+        .action-button.add-new:hover {
+            border-color: var(--color-blue);
+        }
+
+        .action-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .action-label {
+            font-size: var(--font-size-small);
+            line-height: 1.3;
+        }
+
+        /* Shift Overview Card */
+        .shift-card {
+            background-color: var(--color-white);
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .shift-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--color-light-gray);
+        }
+
+        .shift-title {
+            font-weight: 700;
+            font-size: var(--font-size-normal);
+        }
+
+        .shift-time {
+            font-size: var(--font-size-small);
+            color: var(--color-gray);
+        }
+
+        .shift-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .shift-detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .shift-detail-label {
+            font-size: var(--font-size-small);
+            color: var(--color-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .shift-detail-value {
+            font-size: var(--font-size-normal);
+            font-weight: 600;
+        }
+
+        .team-members {
+            border-top: 1px solid var(--color-light-gray);
+            padding-top: 12px;
+        }
+
+        .team-label {
+            font-size: var(--font-size-small);
+            color: var(--color-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .team-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .team-member {
+            background-color: var(--color-bg);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: var(--font-size-small);
+            font-weight: 500;
+        }
+
+        /* Recent Activity Section */
+        .activity-section {
+            margin-bottom: 24px;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .activity-item {
+            background-color: var(--color-white);
+            padding: 14px;
+            border-radius: 4px;
+            border-left: 3px solid var(--color-blue);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-text {
+            font-size: var(--font-size-normal);
+            font-weight: 500;
+        }
+
+        .activity-time {
+            font-size: var(--font-size-small);
+            color: var(--color-gray);
+            white-space: nowrap;
+            margin-left: 8px;
+        }
+
+        /* Bottom Tab Navigation */
+        .tab-navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--color-white);
+            display: flex;
+            border-top: 1px solid var(--color-light-gray);
+            z-index: 99;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: var(--font-size-small);
+            font-weight: 600;
+            color: var(--color-gray);
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+            min-height: var(--touch-target);
+        }
+
+        .tab-button.active {
+            color: var(--color-blue);
+            border-top: 3px solid var(--color-blue);
+            margin-top: -1px;
+        }
+
+        .tab-icon {
+            font-size: 24px;
+        }
+
+        /* Hidden Sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--color-white);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 12px 12px 0 0;
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--color-light-gray);
+        }
+
+        .modal-title {
+            font-size: var(--font-size-large);
+            font-weight: 700;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--color-gray);
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: var(--font-size-normal);
+        }
+
+        .form-input {
+            padding: 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            font-size: var(--font-size-normal);
+            font-family: inherit;
+            min-height: var(--touch-target);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-blue);
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .submit-button {
+            background-color: var(--color-blue);
+            color: var(--color-white);
+            padding: 14px;
+            border: none;
+            border-radius: 4px;
+            font-size: var(--font-size-normal);
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            min-height: var(--touch-target);
+            transition: all 0.2s ease;
+        }
+
+        .submit-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Settings/Placeholder Styles */
+        .placeholder-section {
+            background-color: var(--color-white);
+            padding: 20px;
+            border-radius: 4px;
+            text-align: center;
+            color: var(--color-gray);
+            margin: 20px 0;
+        }
+
+        .placeholder-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        /* TRENDS TAB STYLES */
+        .equipment-selector {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 12px 0;
+            margin-bottom: 16px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .equipment-selector::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .equipment-selector::-webkit-scrollbar-track {
+            background: var(--color-light-gray);
+        }
+
+        .equipment-selector::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: 2px;
+        }
+
+        .equipment-button {
+            flex-shrink: 0;
+            background-color: var(--color-white);
+            border: 2px solid var(--color-border);
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-size: var(--font-size-small);
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .equipment-button.active {
+            background-color: var(--color-text);
+            color: var(--color-white);
+            border-color: var(--color-text);
+        }
+
+        .parameter-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .parameter-pill {
+            flex: 1;
+            background-color: var(--color-white);
+            border: 2px solid var(--color-border);
+            padding: 12px;
+            border-radius: 4px;
+            font-size: var(--font-size-small);
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .parameter-pill.active {
+            background-color: var(--color-blue);
+            color: var(--color-white);
+            border-color: var(--color-blue);
+        }
+
+        .chart-container {
+            background-color: var(--color-white);
+            padding: 16px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 240px;
+        }
+
+        .stat-card {
+            background-color: var(--color-white);
+            padding: 16px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stat-label {
+            font-size: var(--font-size-small);
+            color: var(--color-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: var(--font-size-large);
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        /* SHIFT LOGBOOK STYLES */
+        .shift-banner {
+            background-color: var(--color-text);
+            color: var(--color-white);
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shift-banner-left h2 {
+            font-size: var(--font-size-large);
+            margin-bottom: 6px;
+        }
+
+        .shift-banner-left p {
+            font-size: var(--font-size-small);
+            color: #d0d0d0;
+        }
+
+        .shift-lead {
+            font-size: var(--font-size-normal);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .team-roster {
+            background-color: var(--color-white);
+            padding: 16px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .roster-title {
+            font-size: var(--font-size-small);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-gray);
+            margin-bottom: 12px;
+        }
+
+        .roster-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .roster-member {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            border: 1px solid var(--color-light-gray);
+            border-radius: 4px;
+            font-size: var(--font-size-small);
+        }
+
+        .status-badge {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--color-green);
+        }
+
+        .status-badge.field {
+            background-color: var(--color-amber);
+        }
+
+        .status-badge.control {
+            background-color: var(--color-blue);
+        }
+
+        .notes-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .notes-section-title {
+            font-size: var(--font-size-small);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-gray);
+            margin-top: 20px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .handover-note {
+            background-color: var(--color-white);
+            border-left: 4px solid var(--color-blue);
+            padding: 12px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .handover-note.previous-shift {
+            background-color: #f9f9f9;
+            border-left-color: var(--color-light-gray);
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+
+        .note-equipment {
+            font-weight: 700;
+            color: var(--color-text);
+            font-size: var(--font-size-normal);
+        }
+
+        .note-time {
+            font-size: var(--font-size-small);
+            color: var(--color-gray);
+        }
+
+        .note-text {
+            font-size: var(--font-size-normal);
+            color: var(--color-text);
+            line-height: 1.4;
+        }
+
+        .note-author {
+            font-size: var(--font-size-small);
+            color: var(--color-gray);
+            margin-top: 6px;
+        }
+
+        .end-shift-button {
+            background-color: var(--color-red);
+            color: var(--color-white);
+            padding: 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: var(--font-size-normal);
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            min-height: var(--touch-target);
+            margin-top: 20px;
+        }
+
+        .end-shift-button:active {
+            background-color: #b71c1c;
+        }
+
+        /* SETTINGS TAB STYLES */
+        .settings-card {
+            background-color: var(--color-white);
+            padding: 16px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-section-title {
+            font-size: var(--font-size-normal);
+            font-weight: 700;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--color-light-gray);
+            color: var(--color-text);
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--color-light-gray);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-label {
+            font-size: var(--font-size-normal);
+            font-weight: 600;
+            color: var(--color-text);
+            flex: 1;
+        }
+
+        .settings-value {
+            font-size: var(--font-size-normal);
+            color: var(--color-gray);
+            text-align: right;
+            flex: 1;
+        }
+
+        .settings-toggle-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--color-light-gray);
+        }
+
+        .settings-toggle-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: var(--color-blue);
+        }
+
+        .settings-action-button {
+            width: 100%;
+            background-color: var(--color-white);
+            color: var(--color-text);
+            border: 2px solid var(--color-border);
+            padding: 12px;
+            border-radius: 4px;
+            font-size: var(--font-size-normal);
+            font-weight: 600;
+            cursor: pointer;
+            min-height: var(--touch-target);
+            margin-top: 10px;
+            transition: all 0.15s ease;
+        }
+
+        .settings-action-button:active {
+            transform: scale(0.98);
+        }
+
+        .settings-action-button:hover {
+            border-color: var(--color-text);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-info-box {
+            background-color: #f9f9f9;
+            padding: 12px;
+            border-left: 4px solid var(--color-blue);
+            border-radius: 4px;
+            font-size: var(--font-size-small);
+            margin-top: 12px;
+            color: var(--color-text);
+            line-height: 1.5;
+        }
+
+        /* RESOURCES TAB STYLES */
+        .resource-section {
+            margin-bottom: 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .resource-header {
+            width: 100%;
+            background-color: var(--color-white);
+            border: none;
+            padding: 14px;
+            text-align: left;
+            font-size: var(--font-size-normal);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-light-gray);
+        }
+
+        .resource-header:hover {
+            background-color: #f5f5f5;
+        }
+
+        .toggle-icon {
+            font-size: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .resource-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .resource-content {
+            background-color: var(--color-white);
+            border-top: 1px solid var(--color-light-gray);
+        }
+
+        .resource-content.hidden {
+            display: none;
+        }
+
+        .resource-item {
+            padding: 14px;
+            border-bottom: 1px solid var(--color-light-gray);
+        }
+
+        .resource-item:last-child {
+            border-bottom: none;
+        }
+
+        .resource-title {
+            font-size: var(--font-size-normal);
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 6px;
+        }
+
+        .resource-tags {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .resource-tag {
+            display: inline-block;
+            background-color: var(--color-light-gray);
+            color: var(--color-gray);
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .resource-tag.critical {
+            background-color: var(--color-red);
+            color: var(--color-white);
+        }
+
+        .resource-tag.safety {
+            background-color: var(--color-amber);
+            color: var(--color-white);
+        }
+
+        .resource-description {
+            font-size: var(--font-size-small);
+            color: var(--color-gray);
+            line-height: 1.4;
+        }
+
+        .resource-action-button {
+            background-color: var(--color-white);
+            color: var(--color-text);
+            border: 2px solid var(--color-border);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: var(--font-size-small);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            min-height: 40px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .resource-action-button:active {
+            transform: scale(0.98);
+        }
+
+        .resource-action-button:hover {
+            border-color: var(--color-text);
+        }
+
+        .resource-action-button.bookmarked {
+            background-color: var(--color-amber);
+            color: var(--color-white);
+            border-color: var(--color-amber);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .app-container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 12px;
+            }
+
+            .header-title {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="header-title">Refinery Unit Logbook</div>
+            <div class="header-time" id="currentTime"></div>
+        </div>
+        <div class="header-right">
+            <div class="sync-indicator" id="syncStatus" title="Sync Status: Online">
+                ✓
+            </div>
+            <div class="user-badge">
+                <div class="user-avatar">A</div>
+                <div class="user-name">Ashwin</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="app-container">
+        <!-- HOME SECTION -->
+        <section id="homeSection" class="section active">
+            <!-- Priority Alerts -->
+            <div class="alerts-section">
+                <div class="alerts-title">Priority Alerts</div>
+                <div class="alert-card critical">
+                    <div class="alert-header">
+                        <div class="alert-title">133-PA-1001 B</div>
+                        <div class="alert-badge critical">CRITICAL</div>
+                    </div>
+                    <div class="alert-description">Critical Vibration detected on pump discharge line.</div>
+                    <div class="alert-reporter">Reported by Irfan S. • 07:30 AM</div>
+                </div>
+                <div class="alert-card warning">
+                    <div class="alert-header">
+                        <div class="alert-title">133-H-1001</div>
+                        <div class="alert-badge warning">WARNING</div>
+                    </div>
+                    <div class="alert-description">Pilot Flame indicator fluctuating. Manual check recommended.</div>
+                    <div class="alert-reporter">Reported by Vinkal • 08:15 AM</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="actions-section">
+                <div class="alerts-title">Quick Actions</div>
+                <div class="actions-grid">
+                    <button class="action-button" onclick="navigateToEquipment('pump')">
+                        <div class="action-icon">💧</div>
+                        <div class="action-label">Pump Logs</div>
+                    </button>
+                    <button class="action-button" onclick="navigateToEquipment('compressor')">
+                        <div class="action-icon">⚙️</div>
+                        <div class="action-label">Compressor Logs</div>
+                    </button>
+                    <button class="action-button" onclick="navigateToEquipment('heater')">
+                        <div class="action-icon">🔥</div>
+                        <div class="action-label">Heater Logs</div>
+                    </button>
+                    <button class="action-button" onclick="navigateToEquipment('finfan')">
+                        <div class="action-icon">❄️</div>
+                        <div class="action-label">FinFan Logs</div>
+                    </button>
+                    <button class="action-button add-new" onclick="openAddEquipmentModal()">
+                        ➕ Add New Equipment
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shift Overview -->
+            <div class="shift-card">
+                <div class="shift-header">
+                    <div class="shift-title">Current Shift</div>
+                    <div class="shift-time">06:00 - 14:00</div>
+                </div>
+                <div class="shift-details">
+                    <div class="shift-detail-item">
+                        <div class="shift-detail-label">Shift</div>
+                        <div class="shift-detail-value">Morning</div>
+                    </div>
+                    <div class="shift-detail-item">
+                        <div class="shift-detail-label">Operator</div>
+                        <div class="shift-detail-value">Ashwin</div>
+                    </div>
+                </div>
+                <div class="team-members">
+                    <div class="team-label">Team Members</div>
+                    <div class="team-list">
+                        <div class="team-member">👨 Irfan S. (Lead)</div>
+                        <div class="team-member">👨 Vinkal</div>
+                        <div class="team-member">👨 Piyush</div>
+                        <div class="team-member">👨 Mubashar</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="activity-section">
+                <div class="alerts-title">Recent Activity</div>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-text">133-PA-1001 A recorded</div>
+                        <div class="activity-time">08:45 AM</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-text">133-K-1001 reading logged</div>
+                        <div class="activity-time">08:30 AM</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-text">133-H-1001 observation added</div>
+                        <div class="activity-time">08:00 AM</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-text">Shift handover completed</div>
+                        <div class="activity-time">06:15 AM</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRENDS SECTION -->
+        <section id="trendsSection" class="section">
+            <div class="alerts-title" style="margin-bottom: 16px;">Equipment Trends</div>
+
+            <!-- Equipment Selector (Dropdown-based) -->
+            <div style="margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="form-group">
+                    <label class="form-label" style="margin-bottom: 8px; font-size: 0.8rem;">EQUIPMENT TYPE</label>
+                    <select class="form-input" id="equipmentTypeSelect" onchange="updateEquipmentList()"
+                        style="padding: 10px;">
+                        <option value="pump">Pump</option>
+                        <option value="compressor">Compressor</option>
+                        <option value="heater">Heater</option>
+                        <option value="finfan">FinFan Cooler</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" style="margin-bottom: 8px; font-size: 0.8rem;">SPECIFIC UNIT</label>
+                    <select class="form-input" id="equipmentUnitSelect" onchange="selectEquipmentFromDropdown()"
+                        style="padding: 10px;">
+                        <!-- Populated by JavaScript -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Parameter Toggle -->
+            <div class="parameter-toggle">
+                <button class="parameter-pill active" onclick="selectParameter(this, 'pressure')">Pressure
+                    (PSI)</button>
+                <button class="parameter-pill" onclick="selectParameter(this, 'temperature')">Temp (°C)</button>
+                <button class="parameter-pill" onclick="selectParameter(this, 'flow')">Flow (GPM)</button>
+            </div>
+
+            <!-- Chart with Title -->
+            <div style="margin-bottom: 16px;">
+                <div id="chartTitle" style="font-weight: 700; font-size: var(--font-size-normal); margin-bottom: 8px;">
+                    133-PA-1001 A - Pressure (PSI)</div>
+                <div class="chart-container">
+                    <svg class="chart-svg" id="trendChart"></svg>
+                </div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="stat-card">
+                <div class="stat-item">
+                    <div class="stat-label">Average</div>
+                    <div class="stat-value" id="statAvg">68.2</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Maximum</div>
+                    <div class="stat-value" id="statMax">89.5</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Minimum</div>
+                    <div class="stat-value" id="statMin">52.1</div>
+                </div>
+            </div>
+
+            <!-- Baseline Info -->
+            <div
+                style="background-color: var(--color-white); padding: 12px; border: 1px solid var(--color-border); border-radius: 4px; font-size: var(--font-size-small);">
+                <div style="margin-bottom: 8px;"><strong>Normal Operating Range:</strong></div>
+                <div style="margin-bottom: 4px;">🟢 Green: 60-80 PSI (Optimal)</div>
+                <div style="margin-bottom: 4px;">🟠 Amber: 50-60 or 80-95 PSI (Caution)</div>
+                <div>🔴 Red: <50 or>95 PSI (Critical)</div>
+            </div>
+        </section>
+
+        <!-- SHIFT LOGBOOK SECTION -->
+        <section id="logbookSection" class="section">
+            <!-- Active Shift Banner -->
+            <div class="shift-banner">
+                <div class="shift-banner-left">
+                    <h2>Morning Shift</h2>
+                    <p>06:00 - 14:00</p>
+                </div>
+                <div class="shift-lead">
+                    Lead: <strong>Irfan S.</strong>
+                </div>
+            </div>
+
+            <!-- Team Roster -->
+            <div class="team-roster">
+                <div class="roster-title">Who's on the Ground</div>
+                <div class="roster-list">
+                    <div class="roster-member">
+                        <span class="status-badge control"></span>
+                        Irfan S. (Lead)
+                    </div>
+                    <div class="roster-member">
+                        <span class="status-badge field"></span>
+                        Vinkal
+                    </div>
+                    <div class="roster-member">
+                        <span class="status-badge field"></span>
+                        Piyush
+                    </div>
+                    <div class="roster-member">
+                        <span class="status-badge control"></span>
+                        Mubashar
+                    </div>
+                </div>
+                <div
+                    style="font-size: var(--font-size-small); color: var(--color-gray); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--color-light-gray);">
+                    <span class="status-badge control" style="margin-right: 6px;"></span>Control Room
+                    <span class="status-badge field" style="margin-left: 12px; margin-right: 6px;"></span>In Field
+                </div>
+            </div>
+
+            <!-- Handover Notes -->
+            <div class="notes-feed">
+                <div class="notes-section-title">Today's Handover Log</div>
+
+                <div class="handover-note">
+                    <div class="note-header">
+                        <div class="note-equipment">133-PA-1001 A</div>
+                        <div class="note-time">09:30 AM</div>
+                    </div>
+                    <div class="note-text">Discharge pressure nominal at 72 PSI. Vibration levels stable. Continue
+                        routine monitoring.</div>
+                    <div class="note-author">Logged by Ashwin</div>
+                </div>
+
+                <div class="handover-note">
+                    <div class="note-header">
+                        <div class="note-equipment">133-H-1001</div>
+                        <div class="note-time">09:15 AM</div>
+                    </div>
+                    <div class="note-text">Adjusted fuel gas valve. Pilot flame is now stable and showing consistent
+                        ignition.</div>
+                    <div class="note-author">Logged by Vinkal</div>
+                </div>
+
+                <div class="handover-note">
+                    <div class="note-header">
+                        <div class="note-equipment">133-K-1001</div>
+                        <div class="note-time">08:45 AM</div>
+                    </div>
+                    <div class="note-text">Compressor outlet temp 85°C. Within spec. No unusual vibrations. Checked lube
+                        oil level—acceptable.</div>
+                    <div class="note-author">Logged by Piyush</div>
+                </div>
+
+                <div class="handover-note">
+                    <div class="note-header">
+                        <div class="note-equipment">133-FAN-1001</div>
+                        <div class="note-time">08:00 AM</div>
+                    </div>
+                    <div class="note-text">Fan motor running smoothly. Cooling duty stable. All parameters nominal.
+                    </div>
+                    <div class="note-author">Logged by Irfan S.</div>
+                </div>
+
+                <div class="notes-section-title">Previous Shift Notes (Night Shift)</div>
+
+                <div class="handover-note previous-shift">
+                    <div class="note-header">
+                        <div class="note-equipment">133-PA-1001 B</div>
+                        <div class="note-time">Yesterday 23:45</div>
+                    </div>
+                    <div class="note-text">⚠️ CRITICAL VIBRATION DETECTED on discharge line. Recommend full inspection
+                        at next available time window. Pump isolated as precaution.</div>
+                    <div class="note-author">Logged by Kumar / Night Lead</div>
+                </div>
+
+                <div class="handover-note previous-shift">
+                    <div class="note-header">
+                        <div class="note-equipment">133-H-1001</div>
+                        <div class="note-time">Yesterday 22:30</div>
+                    </div>
+                    <div class="note-text">Pilot flame became unstable around 22:00. Could not identify immediate cause.
+                        Reduced inlet fuel gas pressure 5 PSI as temporary measure.</div>
+                    <div class="note-author">Logged by Jakob / Night Lead</div>
+                </div>
+            </div>
+
+            <!-- End Shift Button (only for lead) -->
+            <button class="end-shift-button" onclick="handleEndShift()">📋 Finalize Shift & Prepare Handover</button>
+        </section>
+
+        <!-- RESOURCES SECTION -->
+        <section id="resourcesSection" class="section">
+            <div class="alerts-title" style="margin-bottom: 16px;">Equipment Resources</div>
+
+            <!-- Search Box -->
+            <div class="form-group" style="margin-bottom: 20px;">
+                <input type="text" class="form-input" id="resourceSearch"
+                    placeholder="Search manuals, SOPs, datasheets..." onkeyup="filterResources()"
+                    style="padding: 12px;">
+            </div>
+
+            <!-- Pump Resources -->
+            <div class="resource-section">
+                <button class="resource-header" onclick="toggleResourceSection(this)">
+                    <span>💧 Pump Equipment</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="resource-content">
+                    <div class="resource-item">
+                        <div class="resource-title">133-PA-1001 Operating Manual</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Manual</span>
+                            <span class="resource-tag">v2.1</span>
+                        </div>
+                        <div class="resource-description">Complete operating procedures, maintenance guidelines, and
+                            troubleshooting for PA-1001 series pumps.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button" onclick="downloadResource('PA-1001-Manual.pdf')">📥
+                                Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+
+                    <div class="resource-item">
+                        <div class="resource-title">Pump Maintenance SOP</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">SOP</span>
+                            <span class="resource-tag">Critical</span>
+                        </div>
+                        <div class="resource-description">Standard Operating Procedure for routine maintenance, oil
+                            changes, seal replacement, and inspection intervals.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button"
+                                onclick="downloadResource('Pump-Maintenance-SOP.pdf')">📥 Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+
+                    <div class="resource-item">
+                        <div class="resource-title">PA-1001 Datasheet & Specs</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Datasheet</span>
+                        </div>
+                        <div class="resource-description">Technical specifications, performance curves, maximum
+                            operating limits, and replacement parts list.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button"
+                                onclick="downloadResource('PA-1001-Datasheet.pdf')">📥 Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+
+                    <div class="resource-item">
+                        <div class="resource-title">Pump Safety Procedures</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Safety</span>
+                            <span class="resource-tag">Red Tag</span>
+                        </div>
+                        <div class="resource-description">Lockout-Tagout (LOTO) procedures, emergency shutdown, and
+                            hazard warnings for pump operations.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button" onclick="downloadResource('Pump-Safety.pdf')">📥
+                                Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compressor Resources -->
+            <div class="resource-section">
+                <button class="resource-header" onclick="toggleResourceSection(this)">
+                    <span>⚙️ Compressor Equipment</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="resource-content">
+                    <div class="resource-item">
+                        <div class="resource-title">133-K-1001 Operating Manual</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Manual</span>
+                            <span class="resource-tag">v1.8</span>
+                        </div>
+                        <div class="resource-description">Comprehensive operational guide for K-1001 centrifugal
+                            compressors including startup, shutdown, and control systems.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button" onclick="downloadResource('K-1001-Manual.pdf')">📥
+                                Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+
+                    <div class="resource-item">
+                        <div class="resource-title">Compressor Troubleshooting Guide</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Troubleshooting</span>
+                        </div>
+                        <div class="resource-description">Decision trees for common issues: vibration, noise,
+                            temperature rise, pressure fluctuations, and bearing problems.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button"
+                                onclick="downloadResource('Compressor-Troubleshooting.pdf')">📥 Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+
+                    <div class="resource-item">
+                        <div class="resource-title">K-1001 Performance Curves</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Technical</span>
+                            <span class="resource-tag">Charts</span>
+                        </div>
+                        <div class="resource-description">Pressure-flow relationships, efficiency maps, and power
+                            requirements across operating ranges.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button" onclick="downloadResource('K-1001-Curves.pdf')">📥
+                                Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heater Resources -->
+            <div class="resource-section">
+                <button class="resource-header" onclick="toggleResourceSection(this)">
+                    <span>🔥 Heater Equipment</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="resource-content">
+                    <div class="resource-item">
+                        <div class="resource-title">133-H-1001 Operating Manual</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Manual</span>
+                            <span class="resource-tag">v3.2</span>
+                        </div>
+                        <div class="resource-description">Fuel gas control, pilot flame operation, combustion tuning,
+                            and safety interlocks for fired heaters.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button" onclick="downloadResource('H-1001-Manual.pdf')">📥
+                                Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+
+                    <div class="resource-item">
+                        <div class="resource-title">Heater Fast-Start Checklist</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Checklist</span>
+                            <span class="resource-tag">Field</span>
+                        </div>
+                        <div class="resource-description">Quick reference card for startup sequence, ignition procedure,
+                            and flame monitoring. Laminated for field use.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button"
+                                onclick="downloadResource('Heater-Startup-Checklist.pdf')">📥 Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+
+                    <div class="resource-item">
+                        <div class="resource-title">Burner Flame Stability Guide</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Safety</span>
+                            <span class="resource-tag">Critical</span>
+                        </div>
+                        <div class="resource-description">Flame characteristics, causes of instability, and corrective
+                            actions. Includes visual flame photo reference.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button" onclick="downloadResource('Flame-Stability.pdf')">📥
+                                Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FinFan Resources -->
+            <div class="resource-section">
+                <button class="resource-header" onclick="toggleResourceSection(this)">
+                    <span>❄️ FinFan Cooler Equipment</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="resource-content">
+                    <div class="resource-item">
+                        <div class="resource-title">133-FAN Operating Manual</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Manual</span>
+                            <span class="resource-tag">v2.0</span>
+                        </div>
+                        <div class="resource-description">Fan motor control, tube-side pressure management, air-side
+                            cleaning, and seasonal adjustments for FinFan coolers.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button" onclick="downloadResource('FAN-Manual.pdf')">📥
+                                Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+
+                    <div class="resource-item">
+                        <div class="resource-title">FinFan Fouling & Cleaning SOP</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">SOP</span>
+                            <span class="resource-tag">Maintenance</span>
+                        </div>
+                        <div class="resource-description">Procedures for identifying fouling, chemical and mechanical
+                            cleaning methods, and effectiveness testing.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button" onclick="downloadResource('FAN-Cleaning-SOP.pdf')">📥
+                                Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+
+                    <div class="resource-item">
+                        <div class="resource-title">Fan Motor Replacement Guide</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Maintenance</span>
+                            <span class="resource-tag">Parts</span>
+                        </div>
+                        <div class="resource-description">Parts list, removal procedure, alignment steps, and
+                            commissioning after motor replacement.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button"
+                                onclick="downloadResource('FAN-Motor-Replacement.pdf')">📥 Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- General Resources -->
+            <div class="resource-section">
+                <button class="resource-header" onclick="toggleResourceSection(this)">
+                    <span>📖 General & Safety Resources</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="resource-content">
+                    <div class="resource-item">
+                        <div class="resource-title">Refinery Safety Manual</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Safety</span>
+                            <span class="resource-tag">All Staff</span>
+                        </div>
+                        <div class="resource-description">Site-wide safety policies, incident reporting, PPE
+                            requirements, and emergency procedures.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button" onclick="downloadResource('Refinery-Safety.pdf')">📥
+                                Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+
+                    <div class="resource-item">
+                        <div class="resource-title">Emergency Shutdown Procedures</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">Critical</span>
+                            <span class="resource-tag">Emergency</span>
+                        </div>
+                        <div class="resource-description">Unit emergency stop procedures, plant-wide ESD, and
+                            post-shutdown checklist.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button" onclick="downloadResource('ESD-Procedures.pdf')">📥
+                                Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+
+                    <div class="resource-item">
+                        <div class="resource-title">App User Guide & Troubleshooting</div>
+                        <div class="resource-tags">
+                            <span class="resource-tag">App</span>
+                            <span class="resource-tag">How-To</span>
+                        </div>
+                        <div class="resource-description">How to use the Logbook app, offline sync, data entry, trends,
+                            and common issues.</div>
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <button class="resource-action-button"
+                                onclick="downloadResource('Logbook-App-Guide.pdf')">📥 Download</button>
+                            <button class="resource-action-button" onclick="toggleBookmark(this)">🔖 Bookmark</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookmarked Resources -->
+            <div class="resource-section">
+                <button class="resource-header" onclick="toggleResourceSection(this)">
+                    <span>⭐ My Bookmarks</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+                <div class="resource-content" id="bookmarksList">
+                    <div
+                        style="padding: 16px; text-align: center; color: var(--color-gray); font-size: var(--font-size-small);">
+                        No bookmarks yet. Click 🔖 to save frequently-used manuals.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SETTINGS SECTION -->
+        <section id="settingsSection" class="section">
+            <div class="alerts-title" style="margin-bottom: 20px;">Settings</div>
+
+            <!-- User Profile -->
+            <div class="settings-card">
+                <div class="settings-section-title">👤 User Profile</div>
+                <div class="settings-item">
+                    <div class="settings-label">Current Operator</div>
+                    <div class="settings-value">Ashwin Kumar</div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Assigned Shift</div>
+                    <div class="settings-value">Morning (06:00 - 14:00)</div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">User ID</div>
+                    <div class="settings-value">OP-2847</div>
+                </div>
+                <button class="settings-action-button" onclick="handleProfileUpdate()">Edit Profile</button>
+            </div>
+
+            <!-- Sync & Offline -->
+            <div class="settings-card">
+                <div class="settings-section-title">☁️ Sync & Offline Mode</div>
+                <div class="settings-item">
+                    <div class="settings-label">Sync Status</div>
+                    <div class="settings-value" id="syncStatusText">
+                        <span style="color: var(--color-green); font-weight: 600;">● Online</span>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Last Sync</div>
+                    <div class="settings-value" id="lastSyncTime">Just now</div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Local Storage Used</div>
+                    <div class="settings-value" id="storageUsed">5.2 MB / 50 MB</div>
+                </div>
+                <button class="settings-action-button" onclick="handleManualSync()">🔄 Sync Now</button>
+                <button class="settings-action-button"
+                    style="background-color: var(--color-amber); color: var(--color-white);"
+                    onclick="handleToggleOfflineMode()">📶 Toggle Offline Mode</button>
+            </div>
+
+            <!-- Data Management -->
+            <div class="settings-card">
+                <div class="settings-section-title">💾 Data Management</div>
+                <div class="settings-info-box">
+                    <strong>Local Database:</strong> All equipment readings and shift notes are stored locally on your
+                    device using WatermelonDB. Data syncs automatically when connected to the network.
+                </div>
+                <button class="settings-action-button"
+                    style="background-color: var(--color-blue); color: var(--color-white);"
+                    onclick="handleExportData()">📤 Export All Data (CSV)</button>
+                <button class="settings-action-button" onclick="handleBackupData()">💾 Create Local Backup</button>
+                <button class="settings-action-button" style="background-color: #ff9800; color: var(--color-white);"
+                    onclick="handleClearCache()">🗑️ Clear Cache</button>
+            </div>
+
+            <!-- Notifications -->
+            <div class="settings-card">
+                <div class="settings-section-title">🔔 Notifications & Alerts</div>
+                <div class="settings-toggle-item">
+                    <div class="settings-label">Critical Alerts</div>
+                    <input type="checkbox" class="settings-checkbox" checked
+                        onchange="handleNotificationChange('critical')">
+                </div>
+                <div class="settings-toggle-item">
+                    <div class="settings-label">Warning Alerts</div>
+                    <input type="checkbox" class="settings-checkbox" checked
+                        onchange="handleNotificationChange('warning')">
+                </div>
+                <div class="settings-toggle-item">
+                    <div class="settings-label">Info Notifications</div>
+                    <input type="checkbox" class="settings-checkbox" onchange="handleNotificationChange('info')">
+                </div>
+                <div class="settings-info-box">
+                    <strong>Note:</strong> Critical alerts are always enabled for safety.
+                </div>
+            </div>
+
+            <!-- Equipment Baseline Settings -->
+            <div class="settings-card">
+                <div class="settings-section-title">⚙️ Equipment Baselines</div>
+                <div class="settings-info-box">
+                    Adjust normal operating ranges for early warning detection.
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Pump Pressure Range</div>
+                    <div class="settings-value">60-80 PSI</div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Compressor Temp Range</div>
+                    <div class="settings-value">30-85 °C</div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Heater Flow Range</div>
+                    <div class="settings-value">100-250 GPM</div>
+                </div>
+                <button class="settings-action-button" onclick="handleCustomizeBaselines()">📊 Customize
+                    Baselines</button>
+            </div>
+
+            <!-- Monitored Equipment -->
+            <div class="settings-card">
+                <div class="settings-section-title">📋 Monitored Equipment</div>
+                <div class="settings-info-box">
+                    You are actively monitoring <strong>16 equipment units</strong>. Manage which units appear in your
+                    trends and alerts.
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <button class="settings-action-button"
+                        style="flex: 1; background-color: var(--color-blue); color: var(--color-white);"
+                        onclick="handleViewEquipment()">👁️ View All Units</button>
+                    <button class="settings-action-button" style="flex: 1;" onclick="openAddEquipmentModal()">➕ Add
+                        Unit</button>
+                </div>
+            </div>
+
+            <!-- App Information -->
+            <div class="settings-card">
+                <div class="settings-section-title">ℹ️ App Information</div>
+                <div class="settings-item">
+                    <div class="settings-label">App Version</div>
+                    <div class="settings-value">1.2.0</div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Build Date</div>
+                    <div class="settings-value">Feb 11, 2026</div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Database Engine</div>
+                    <div class="settings-value">WatermelonDB v0.29</div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">Last Updated</div>
+                    <div class="settings-value">Feb 10, 2026</div>
+                </div>
+            </div>
+
+            <!-- Support & Help -->
+            <div class="settings-card">
+                <div class="settings-section-title">📞 Support & Help</div>
+                <button class="settings-action-button"
+                    style="background-color: var(--color-blue); color: var(--color-white);"
+                    onclick="handleViewManual()">📖 View User Manual</button>
+                <button class="settings-action-button" onclick="handleViewFAQ()">❓ FAQ & Troubleshooting</button>
+                <button class="settings-action-button"
+                    style="background-color: var(--color-green); color: var(--color-white);"
+                    onclick="handleContactSupport()">📧 Contact Support</button>
+                <div class="settings-info-box" style="margin-top: 12px;">
+                    <strong>Issues?</strong> Email: <a href="mailto:support@refinery.local"
+                        style="color: var(--color-blue); text-decoration: underline;">support@refinery.local</a><br>
+                    Phone: +1-555-0147 (ext. 4829)
+                </div>
+            </div>
+
+            <!-- Debug/Logs (For troubleshooting) -->
+            <div class="settings-card" style="background-color: #fafafa; border: 1px dashed var(--color-border);">
+                <div class="settings-section-title">🐛 Debug Info (Development)</div>
+                <button class="settings-action-button" style="font-size: 0.875rem;" onclick="handleViewLogs()">📋 View
+                    Debug Logs</button>
+                <button class="settings-action-button"
+                    style="font-size: 0.875rem; background-color: #ff6b6b; color: var(--color-white);"
+                    onclick="handleResetApp()">⚠️ Reset App (Clear All Data)</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bottom Tab Navigation -->
+    <nav class="tab-navigation">
+        <button class="tab-button active" onclick="switchTab('home')">
+            <div class="tab-icon">🏠</div>
+            <span>Home</span>
+        </button>
+        <button class="tab-button" onclick="switchTab('trends')">
+            <div class="tab-icon">📈</div>
+            <span>Trends</span>
+        </button>
+        <button class="tab-button" onclick="switchTab('logbook')">
+            <div class="tab-icon">📋</div>
+            <span>Shift</span>
+        </button>
+        <button class="tab-button" onclick="switchTab('resources')">
+            <div class="tab-icon">📚</div>
+            <span>Resources</span>
+        </button>
+        <button class="tab-button" onclick="switchTab('settings')">
+            <div class="tab-icon">⚙️</div>
+            <span>Settings</span>
+        </button>
+    </nav>
+
+    <!-- Add Equipment Modal -->
+    <div id="addEquipmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Add Equipment</div>
+                <button class="close-button" onclick="closeModal('addEquipmentModal')">✕</button>
+            </div>
+            <form onsubmit="handleAddEquipment(event)">
+                <div class="form-group">
+                    <label class="form-label">Equipment ID</label>
+                    <input type="text" class="form-input" placeholder="e.g., 133-PA-1002" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Equipment Type</label>
+                    <select class="form-input" required>
+                        <option value="">Select Type</option>
+                        <option value="pump">Pump</option>
+                        <option value="compressor">Compressor</option>
+                        <option value="heater">Heater</option>
+                        <option value="finfan">FinFan Cooler</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-input" placeholder="e.g., Unit 3, Block A" required>
+                </div>
+                <button type="submit" class="submit-button">Register Equipment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Reading Modal -->
+    <div id="addReadingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="readingModalTitle">New Pump Record</div>
+                <button class="close-button" onclick="closeModal('addReadingModal')">✕</button>
+            </div>
+            <form onsubmit="handleAddReading(event)">
+                <div class="form-group">
+                    <label class="form-label">Equipment</label>
+                    <input type="text" class="form-input" id="readingEquipment" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Pressure (PSI)</label>
+                    <input type="number" class="form-input" step="0.1" placeholder="0.0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Temperature (°C)</label>
+                    <input type="number" class="form-input" step="0.1" placeholder="0.0" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Flow Rate (GPM)</label>
+                    <input type="number" class="form-input" step="0.1" placeholder="0.0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-input" placeholder="Observations or remarks"
+                        style="min-height: 80px; resize: vertical;"></textarea>
+                </div>
+                <button type="submit" class="submit-button">Save Reading</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ===== COMPREHENSIVE EQUIPMENT DATABASE =====
+        const equipmentDatabase = {
+            pump: {
+                '133-PA-1001 A': 'Pump A - Unit 1',
+                '133-PA-1001 B': 'Pump B - Unit 1 (CRITICAL)',
+                '133-PA-1002 A': 'Pump A - Unit 2',
+                '133-PA-1002 B': 'Pump B - Unit 2',
+                '133-PA-1003 A': 'Pump A - Unit 3',
+                '133-PA-1003 B': 'Pump B - Unit 3',
+                '133-PA-1004 A': 'Pump A - Unit 4',
+                '133-PA-1004 B': 'Pump B - Unit 4'
+            },
+            compressor: {
+                '133-K-1001': 'Compressor - Main',
+                '133-K-1002': 'Compressor - Standby',
+                '133-K-1003': 'Compressor - Auxiliary',
+                '133-K-1004': 'Compressor - Backup'
+            },
+            heater: {
+                '133-H-1001': 'Heater - Primary (WARNING)',
+                '133-H-1002': 'Heater - Secondary',
+                '133-H-1003': 'Heater - Auxiliary'
+            },
+            finfan: {
+                '133-FAN-1001': 'FinFan - North',
+                '133-FAN-1002': 'FinFan - South',
+                '133-FAN-1003': 'FinFan - East',
+                '133-FAN-1004': 'FinFan - West'
+            }
+        };
+
+        // ===== REALISTIC MOCK DATA (Stable except for critical units) =====
+        const generateTrendData = (equipmentId, parameter) => {
+            const isCritical = equipmentId === '133-PA-1001 B';
+            const isWarning = equipmentId === '133-H-1001';
+
+            if (parameter === 'pressure') {
+                if (isCritical) {
+                    // Declining pressure trend for PA-1001 B
+                    return [65, 64, 62, 60, 57, 55, 52, 50, 48, 46, 44, 42];
+                }
+                if (isWarning) {
+                    // Slightly elevated with fluctuation for H-1001
+                    return [82, 83, 84, 85, 85, 86, 85, 84, 85, 86, 87, 88];
+                }
+                // Stable range for normal equipment
+                return [70, 71, 70, 71, 69, 70, 71, 70, 71, 70, 69, 70];
+            }
+
+            if (parameter === 'temperature') {
+                if (isCritical) {
+                    // Rising temperature for PA-1001 B
+                    return [38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49];
+                }
+                if (isWarning) {
+                    // High but stable for H-1001
+                    return [128, 129, 130, 131, 130, 129, 130, 131, 130, 129, 130, 131];
+                }
+                // Stable range for normal equipment
+                return [40, 40, 41, 40, 40, 41, 40, 40, 41, 40, 40, 41];
+            }
+
+            if (parameter === 'flow') {
+                if (isCritical) {
+                    // Declining flow for PA-1001 B
+                    return [135, 133, 130, 128, 125, 122, 119, 115, 112, 109, 105, 100];
+                }
+                if (isWarning) {
+                    // Normal with minor variation
+                    return [206, 207, 208, 209, 208, 207, 208, 209, 208, 207, 208, 209];
+                }
+                // Stable range for normal equipment
+                return [132, 133, 132, 133, 131, 132, 133, 132, 133, 132, 131, 132];
+            }
+        };
+
+        const baselines = {
+            pressure: { min: 60, max: 80, warn_min: 50, warn_max: 95, unit: 'PSI' },
+            temperature: { min: 30, max: 70, warn_min: 20, warn_max: 90, unit: '°C' },
+            flow: { min: 100, max: 200, warn_min: 50, warn_max: 250, unit: 'GPM' }
+        };
+
+        let currentEquipment = '133-PA-1001 A';
+        let currentParameter = 'pressure';
+
+        // ===== INITIALIZE EQUIPMENT SELECTOR =====
+        function initializeEquipmentSelector() {
+            const typeSelect = document.getElementById('equipmentTypeSelect');
+            updateEquipmentList();
+        }
+
+        function updateEquipmentList() {
+            const typeSelect = document.getElementById('equipmentTypeSelect');
+            const unitSelect = document.getElementById('equipmentUnitSelect');
+            const selectedType = typeSelect.value;
+
+            unitSelect.innerHTML = '';
+            const units = equipmentDatabase[selectedType];
+
+            for (const [id, name] of Object.entries(units)) {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = name;
+                unitSelect.appendChild(option);
+            }
+
+            currentEquipment = Object.keys(units)[0];
+            selectEquipmentFromDropdown();
+        }
+
+        function selectEquipmentFromDropdown() {
+            const unitSelect = document.getElementById('equipmentUnitSelect');
+            currentEquipment = unitSelect.value;
+            updateStats();
+            renderChart();
+        }
+
+        // ===== TIME UPDATE =====
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // ===== SYNC STATUS =====
+        let isSynced = true;
+        function toggleSyncStatus() {
+            isSynced = !isSynced;
+            const status = document.getElementById('syncStatus');
+            if (isSynced) {
+                status.className = 'sync-indicator';
+                status.textContent = '✓';
+                status.title = 'Sync Status: Online';
+            } else {
+                status.className = 'sync-indicator offline';
+                status.textContent = '●';
+                status.title = 'Sync Status: Offline';
+            }
+        }
+
+        // ===== TAB NAVIGATION =====
+        function switchTab(tabName) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            const sectionMap = {
+                'home': 'homeSection',
+                'trends': 'trendsSection',
+                'logbook': 'logbookSection',
+                'resources': 'resourcesSection',
+                'settings': 'settingsSection'
+            };
+
+            if (sectionMap[tabName]) {
+                document.getElementById(sectionMap[tabName]).classList.add('active');
+                if (tabName === 'trends') {
+                    setTimeout(() => renderChart(), 100);
+                }
+            }
+
+            event.target.closest('.tab-button').classList.add('active');
+        }
+
+        // ===== TRENDS TAB FUNCTIONS =====
+        function selectParameter(element, parameter) {
+            document.querySelectorAll('.parameter-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+            element.classList.add('active');
+            currentParameter = parameter;
+            updateStats();
+            renderChart();
+        }
+
+        function updateStats() {
+            const data = generateTrendData(currentEquipment, currentParameter);
+            const avg = (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1);
+            const max = Math.max(...data).toFixed(1);
+            const min = Math.min(...data).toFixed(1);
+
+            document.getElementById('statAvg').textContent = avg;
+            document.getElementById('statMax').textContent = max;
+            document.getElementById('statMin').textContent = min;
+        }
+
+        function renderChart() {
+            const data = generateTrendData(currentEquipment, currentParameter);
+            const svg = document.getElementById('trendChart');
+            if (!svg) return;
+
+            svg.innerHTML = '';
+
+            const baseline = baselines[currentParameter];
+            const svgWidth = svg.clientWidth || 400;
+            const svgHeight = 240;
+            const padding = { top: 20, right: 20, bottom: 40, left: 60 };
+            const plotWidth = svgWidth - padding.left - padding.right;
+            const plotHeight = svgHeight - padding.top - padding.bottom;
+
+            const dataMax = Math.max(...data, baseline.max);
+            const dataMin = Math.min(...data, baseline.min);
+            const range = dataMax - dataMin || 1;
+
+            const valueToY = (value) => svgHeight - padding.bottom - ((value - dataMin) / range) * plotHeight;
+            const valueToX = (index) => padding.left + (index / (data.length - 1)) * plotWidth;
+            const timeLabel = (index) => {
+                const hour = 6 + Math.floor((index / (data.length - 1)) * 8);
+                return hour + ':00';
+            };
+
+            // Background
+            const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            bgRect.setAttribute('width', svgWidth);
+            bgRect.setAttribute('height', svgHeight);
+            bgRect.setAttribute('fill', '#ffffff');
+            svg.appendChild(bgRect);
+
+            // Grid lines (faint)
+            for (let i = 0; i <= 4; i++) {
+                const y = padding.top + (i * plotHeight) / 4;
+                const gridLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                gridLine.setAttribute('x1', padding.left);
+                gridLine.setAttribute('y1', y);
+                gridLine.setAttribute('x2', svgWidth - padding.right);
+                gridLine.setAttribute('y2', y);
+                gridLine.setAttribute('stroke', '#f0f0f0');
+                gridLine.setAttribute('stroke-width', '1');
+                svg.appendChild(gridLine);
+            }
+
+            // Baseline zones - dotted lines for reference
+            [
+                { y: valueToY(baseline.max), label: 'Max' },
+                { y: valueToY(baseline.min), label: 'Min' }
+            ].forEach(line => {
+                const lineEl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                lineEl.setAttribute('x1', padding.left);
+                lineEl.setAttribute('y1', line.y);
+                lineEl.setAttribute('x2', svgWidth - padding.right);
+                lineEl.setAttribute('y2', line.y);
+                lineEl.setAttribute('stroke', '#bbb');
+                lineEl.setAttribute('stroke-dasharray', '4,4');
+                lineEl.setAttribute('stroke-width', '1');
+                svg.appendChild(lineEl);
+            });
+
+            // Main data line (high contrast - black, thick)
+            let pathData = `M ${valueToX(0)} ${valueToY(data[0])}`;
+            for (let i = 1; i < data.length; i++) {
+                pathData += ` L ${valueToX(i)} ${valueToY(data[i])}`;
+            }
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', pathData);
+            path.setAttribute('stroke', '#000');
+            path.setAttribute('stroke-width', '2.5');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+            svg.appendChild(path);
+
+            // Data points
+            data.forEach((value, i) => {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', valueToX(i));
+                circle.setAttribute('cy', valueToY(value));
+                circle.setAttribute('r', '3');
+                circle.setAttribute('fill', '#000');
+                svg.appendChild(circle);
+            });
+
+            // Y-axis
+            const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            yAxis.setAttribute('x1', padding.left);
+            yAxis.setAttribute('y1', padding.top);
+            yAxis.setAttribute('x2', padding.left);
+            yAxis.setAttribute('y2', svgHeight - padding.bottom);
+            yAxis.setAttribute('stroke', '#000');
+            yAxis.setAttribute('stroke-width', '2');
+            svg.appendChild(yAxis);
+
+            // X-axis
+            const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            xAxis.setAttribute('x1', padding.left);
+            xAxis.setAttribute('y1', svgHeight - padding.bottom);
+            xAxis.setAttribute('x2', svgWidth - padding.right);
+            xAxis.setAttribute('y2', svgHeight - padding.bottom);
+            xAxis.setAttribute('stroke', '#000');
+            xAxis.setAttribute('stroke-width', '2');
+            svg.appendChild(xAxis);
+
+            // Y-axis labels
+            for (let i = 0; i <= 4; i++) {
+                const value = dataMin + (range * (4 - i)) / 4;
+                const y = padding.top + (i * plotHeight) / 4;
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', padding.left - 10);
+                text.setAttribute('y', y + 4);
+                text.setAttribute('text-anchor', 'end');
+                text.setAttribute('font-size', '11px');
+                text.setAttribute('fill', '#000');
+                text.textContent = value.toFixed(0);
+                svg.appendChild(text);
+            }
+
+            // X-axis labels (time)
+            [0, Math.floor((data.length - 1) / 3), Math.floor(2 * (data.length - 1) / 3), data.length - 1].forEach(i => {
+                const x = valueToX(i);
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', x);
+                text.setAttribute('y', svgHeight - padding.bottom + 20);
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('font-size', '11px');
+                text.setAttribute('fill', '#000');
+                text.textContent = timeLabel(i);
+                svg.appendChild(text);
+            });
+
+            // Y-axis label
+            const yLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            yLabel.setAttribute('x', -svgHeight / 2);
+            yLabel.setAttribute('y', 15);
+            yLabel.setAttribute('text-anchor', 'middle');
+            yLabel.setAttribute('font-size', '12px');
+            yLabel.setAttribute('font-weight', '600');
+            yLabel.setAttribute('fill', '#000');
+            yLabel.setAttribute('transform', 'rotate(-90)');
+            yLabel.textContent = baseline.unit;
+            svg.appendChild(yLabel);
+
+            // X-axis label
+            const xLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            xLabel.setAttribute('x', svgWidth / 2);
+            xLabel.setAttribute('y', svgHeight - 5);
+            xLabel.setAttribute('text-anchor', 'middle');
+            xLabel.setAttribute('font-size', '12px');
+            xLabel.setAttribute('font-weight', '600');
+            xLabel.setAttribute('fill', '#000');
+            xLabel.textContent = 'Time (Hours)';
+            svg.appendChild(xLabel);
+
+            // Update chart title
+            const equipmentName = Object.values(equipmentDatabase).flat().find(name => {
+                const id = Object.keys(equipmentDatabase).find(type =>
+                    equipmentDatabase[type][currentEquipment]
+                );
+                return equipmentDatabase[id] && equipmentDatabase[id][currentEquipment];
+            });
+
+            const paramName = currentParameter.charAt(0).toUpperCase() + currentParameter.slice(1);
+            document.getElementById('chartTitle').textContent =
+                `${currentEquipment} - ${paramName} (${baseline.unit})`;
+
+            updateStats();
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function openAddEquipmentModal() {
+            openModal('addEquipmentModal');
+        }
+
+        function navigateToEquipment(type) {
+            const typeNames = {
+                'pump': '133-PA-1001 A',
+                'compressor': '133-K-1001',
+                'heater': '133-H-1001',
+                'finfan': '133-FAN-1001'
+            };
+
+            document.getElementById('readingEquipment').value = typeNames[type] || type;
+            document.getElementById('readingModalTitle').textContent = `New ${type.charAt(0).toUpperCase() + type.slice(1)} Record`;
+            openModal('addReadingModal');
+        }
+
+        function handleAddEquipment(event) {
+            event.preventDefault();
+            alert('Equipment added successfully! Data saved locally.');
+            closeModal('addEquipmentModal');
+            event.target.reset();
+        }
+
+        function handleAddReading(event) {
+            event.preventDefault();
+            const timestamp = new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+            alert(`Reading saved at ${timestamp}. (Offline-first: Synced when connection restored)`);
+            closeModal('addReadingModal');
+            event.target.reset();
+        }
+
+        function handleEndShift() {
+            alert('✓ Shift finalized and handover report prepared.\n\nIncoming crew will see all notes from this shift.\nAll data synced to central database.');
+        }
+
+        // ===== SETTINGS TAB HANDLERS =====
+        function handleProfileUpdate() {
+            alert('Profile settings would open a modal form for:\n- Name\n- Operator ID\n- Shift assignment\n- Email');
+        }
+
+        function handleManualSync() {
+            alert('🔄 Syncing...\n\nUploading 5 new readings...\nDownloading 2 updated notes...\n\n✓ Sync completed successfully!\nLast sync: Just now');
+        }
+
+        function handleToggleOfflineMode() {
+            const statusEl = document.getElementById('syncStatusText');
+            const isOnline = statusEl.textContent.includes('Online');
+
+            if (isOnline) {
+                statusEl.innerHTML = '<span style="color: var(--color-amber); font-weight: 600;">● Offline Mode</span>';
+                alert('📶 Offline Mode ENABLED\n\nYou are now operating in offline mode. All readings are saved locally to WatermelonDB. Data will sync automatically when you return online.');
+            } else {
+                statusEl.innerHTML = '<span style="color: var(--color-green); font-weight: 600;">● Online</span>';
+                alert('☁️ Back Online\n\nYou are back online. Syncing with cloud database...');
+            }
+        }
+
+        function handleExportData() {
+            alert('📤 Exporting data...\n\nGenerating CSV file with all equipment readings from the past 30 days.\n\nFile saved: logbook_export_20260211.csv\n(Ready to download or email)');
+        }
+
+        function handleBackupData() {
+            alert('💾 Creating backup...\n\nBackup of local WatermelonDB created.\nSize: 12.3 MB\n\nYou can restore this backup on another device to continue your work seamlessly.');
+        }
+
+        function handleClearCache() {
+            const confirmed = confirm('⚠️ WARNING: Clear Cache?\n\nThis will remove cached responses and temporary data (NOT your main readings). Are you sure?');
+            if (confirmed) {
+                alert('✓ Cache cleared (5.2 MB freed)\n\nYour equipment readings are safe in the local database.');
+                document.getElementById('storageUsed').textContent = '2.1 MB / 50 MB';
+            }
+        }
+
+        function handleNotificationChange(type) {
+            const options = {
+                'critical': 'Critical alerts (Red)',
+                'warning': 'Warning alerts (Amber)',
+                'info': 'Info notifications'
+            };
+            alert(`Notification setting for "${options[type]}" updated.`);
+        }
+
+        function handleCustomizeBaselines() {
+            alert('📊 Customize Baselines\n\nThis would open an advanced form to set custom operating ranges for each equipment type:\n\n- Define min/max for "Green" (normal)\n- Define min/max for "Amber" (caution)\n- Define min/max for "Red" (critical)\n\nNOTE: Changing baselines affects alert triggering.');
+        }
+
+        function handleViewEquipment() {
+            alert('📋 Monitored Equipment List:\n\n🔵 Pumps (8 units)\n   - 133-PA-1001 A/B\n   - 133-PA-1002 A/B\n   - 133-PA-1003 A/B\n   - 133-PA-1004 A/B\n\n🔵 Compressors (4 units)\n🔵 Heaters (3 units)\n🔵 FinFan Coolers (4 units)\n\nYou can enable/disable monitoring per unit from this view.');
+        }
+
+        function handleViewManual() {
+            alert('📖 User Manual\n\nOpening embedded manual:\n\n1. Getting Started\n2. Recording Equipment Readings\n3. Understanding Trends & Charts\n4. Managing Offline Sync\n5. Team Handover Process\n6. Troubleshooting\n7. FAQ');
+        }
+
+        function handleViewFAQ() {
+            alert('❓ FAQ & Troubleshooting\n\nQ: Why isn\'t my data syncing?\nA: Check your connection. Data stays safe locally and syncs when online.\n\nQ: Can I add custom equipment?\nA: Yes, use "Add Equipment" button to register new units.\n\nQ: How long is data kept locally?\nA: All historical data is retained & synced to cloud.\n\nQ: What if I lose my phone?\nA: Create regular backups via Settings → Data Management.');
+        }
+
+        function handleContactSupport() {
+            alert('📧 Contact Support\n\nEmail: support@refinery.local\nPhone: +1-555-0147 (ext. 4829)\nHours: 24/7 for critical issues\n\nA support ticket will be created with:\n- App version\n- Device info\n- Your operator ID\n- Current logs');
+        }
+
+        function handleViewLogs() {
+            alert('📋 Debug Logs\n\n[2026-02-11 12:45:30] App started\n[2026-02-11 12:45:31] Loaded 16 equipment units\n[2026-02-11 12:46:00] User logged in: Ashwin\n[2026-02-11 12:47:15] Synced 3 new readings\n[2026-02-11 12:48:42] Offline mode activated\n[2026-02-11 12:49:30] Saved reading: 133-PA-1001 A\n\n\nYou can export these logs for troubleshooting.');
+        }
+
+        function handleResetApp() {
+            const confirmed = confirm('⚠️⚠️ WARNING: RESET APP? ⚠️⚠️\n\nThis will DELETE ALL data including:\n- All equipment readings\n- All shift notes\n- User settings\n\nThis action CANNOT be undone!\n\nAre you absolutely certain?');
+            if (confirmed) {
+                const doubleConfirm = confirm('Last warning: Delete everything and reset to factory settings?');
+                if (doubleConfirm) {
+                    alert('✓ App reset complete.\n\nThe app will restart in 3 seconds...');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 3000);
+                }
+            }
+        }
+
+        // ===== RESOURCES TAB FUNCTIONS =====
+        let bookmarks = [];
+
+        function toggleResourceSection(header) {
+            const content = header.nextElementSibling;
+            header.classList.toggle('collapsed');
+            content.classList.toggle('hidden');
+        }
+
+        function downloadResource(filename) {
+            alert(`📥 Downloading: ${filename}\n\nFile size: varies\n\nThe file has been saved to your device.\n\nYou can open it now or access it later from your downloads folder.`);
+        }
+
+        function toggleBookmark(button) {
+            const resourceItem = button.closest('.resource-item');
+            const resourceTitle = resourceItem.querySelector('.resource-title').textContent;
+
+            button.classList.toggle('bookmarked');
+
+            if (button.classList.contains('bookmarked')) {
+                button.textContent = '❌ Unbookmark';
+                if (!bookmarks.includes(resourceTitle)) {
+                    bookmarks.push(resourceTitle);
+                    updateBookmarksList();
+                }
+            } else {
+                button.textContent = '🔖 Bookmark';
+                bookmarks = bookmarks.filter(b => b !== resourceTitle);
+                updateBookmarksList();
+            }
+        }
+
+        function updateBookmarksList() {
+            const bookmarksList = document.getElementById('bookmarksList');
+
+            if (bookmarks.length === 0) {
+                bookmarksList.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--color-gray); font-size: var(--font-size-small);">No bookmarks yet. Click 🔖 to save frequently-used manuals.</div>';
+                return;
+            }
+
+            bookmarksList.innerHTML = bookmarks.map(item => `
+                <div class="resource-item">
+                    <div class="resource-title">${item}</div>
+                    <button class="resource-action-button" style="width: 100%; margin-top: 8px;" onclick="downloadResource('${item.replace(/\\s+/g, '-')}.pdf')">📥 Download</button>
+                </div>
+            `).join('');
+        }
+
+        function filterResources() {
+            const searchTerm = document.getElementById('resourceSearch').value.toLowerCase();
+            const sections = document.querySelectorAll('.resource-section');
+
+            sections.forEach(section => {
+                const items = section.querySelectorAll('.resource-item');
+                let visibleCount = 0;
+
+                items.forEach(item => {
+                    const title = item.querySelector('.resource-title').textContent.toLowerCase();
+                    const description = item.querySelector('.resource-description').textContent.toLowerCase();
+                    const tags = Array.from(item.querySelectorAll('.resource-tag')).map(t => t.textContent.toLowerCase()).join(' ');
+
+                    if (title.includes(searchTerm) || description.includes(searchTerm) || tags.includes(searchTerm)) {
+                        item.style.display = '';
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Hide section if no items match
+                if (visibleCount === 0) {
+                    section.style.display = 'none';
+                } else {
+                    section.style.display = '';
+                }
+            });
+        }
+
+        // ===== EVENT LISTENERS =====
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+        });
+
+        // Initial setup on page load
+        window.addEventListener('load', function () {
+            initializeEquipmentSelector();
+            renderChart();
+        });
+    </script>
+</body>
+
+</html>
