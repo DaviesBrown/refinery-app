@@ -13,36 +13,80 @@
         }
 
         :root {
-            --color-primary: #1a1a1a;
-            --color-text: #000;
-            --color-bg: #f5f5f5;
+            --color-primary: #0f172a;
+            --color-text: #0f172a;
+            --color-bg: #f8fafc;
             --color-white: #fff;
-            --color-red: #d32f2f;
-            --color-amber: #f57c00;
-            --color-green: #388e3c;
-            --color-blue: #1976d2;
-            --color-gray: #757575;
-            --color-light-gray: #e0e0e0;
-            --color-border: #bdbdbd;
-            --font-size-large: 1.25rem;
+            --color-red: #ef4444;
+            --color-amber: #f59e0b;
+            --color-green: #10b981;
+            --color-blue: #3b82f6;
+            --color-blue-light: #60a5fa;
+            --color-gray: #64748b;
+            --color-gray-dark: #475569;
+            --color-light-gray: #e2e8f0;
+            --color-border: #cbd5e1;
+            --font-size-large: 1.5rem;
             --font-size-normal: 1rem;
             --font-size-small: 0.875rem;
+            --font-size-xs: 0.75rem;
             --touch-target: 48px;
+            --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1), 0 2px 4px -1px rgba(15, 23, 42, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 10px 10px -5px rgba(15, 23, 42, 0.04);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-text: #f1f5f9;
+                --color-bg: #0f172a;
+                --color-white: #1e293b;
+                --color-light-gray: #334155;
+                --color-border: #475569;
+                --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+                --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+                --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+                --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+            }
+
+            body {
+                background-color: var(--color-bg);
+                color: var(--color-text);
+            }
+        }
+
+        /* Manual dark mode override */
+        html.dark-mode {
+            --color-text: #f1f5f9;
+            --color-bg: #0f172a;
+            --color-white: #1e293b;
+            --color-light-gray: #334155;
+            --color-border: #475569;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        html.dark-mode body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
             background-color: var(--color-bg);
             color: var(--color-text);
-            line-height: 1.5;
+            line-height: 1.6;
             overflow-x: hidden;
         }
 
         /* Header */
         .header {
-            background-color: var(--color-primary);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: var(--color-white);
-            padding: 16px;
+            padding: 16px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -51,7 +95,7 @@
             left: 0;
             right: 0;
             z-index: 100;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-lg);
         }
 
         .header-left {
@@ -61,7 +105,7 @@
         }
 
         .header-title {
-            font-size: var(--font-size-large);
+            font-size: 1.375rem;
             font-weight: 700;
             letter-spacing: -0.5px;
         }
@@ -97,6 +141,28 @@
             background-color: var(--color-blue);
         }
 
+        .dark-mode-toggle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .dark-mode-toggle:active {
+            transform: scale(0.95);
+        }
+
         .user-badge {
             display: flex;
             align-items: center;
@@ -107,10 +173,10 @@
         }
 
         .user-avatar {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            background-color: var(--color-blue);
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -128,7 +194,7 @@
             margin-top: 70px;
             margin-bottom: 80px;
             padding: 16px;
-            max-width: 600px;
+            max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -139,7 +205,7 @@
         }
 
         .alerts-title {
-            font-size: var(--font-size-small);
+            font-size: var(--font-size-xs);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -150,21 +216,40 @@
 
         .alert-card {
             background-color: var(--color-white);
-            border-left: 5px solid;
+            border-left: 4px solid;
             padding: 16px;
             margin-bottom: 12px;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s ease;
         }
 
         .alert-card.critical {
             border-left-color: var(--color-red);
-            background-color: #ffebee;
+            background-color: #fef2f2;
         }
 
         .alert-card.warning {
             border-left-color: var(--color-amber);
-            background-color: #fff3e0;
+            background-color: #fffbeb;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .alert-card.critical {
+                background-color: rgba(239, 68, 68, 0.1);
+            }
+
+            .alert-card.warning {
+                background-color: rgba(245, 158, 11, 0.1);
+            }
+        }
+
+        html.dark-mode .alert-card.critical {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        html.dark-mode .alert-card.warning {
+            background-color: rgba(245, 158, 11, 0.1);
         }
 
         .alert-header {
@@ -224,9 +309,9 @@
 
         .action-button {
             background-color: var(--color-white);
-            border: 2px solid var(--color-border);
+            border: 1px solid var(--color-border);
             padding: 20px 16px;
-            border-radius: 4px;
+            border-radius: 8px;
             min-height: 100px;
             display: flex;
             flex-direction: column;
@@ -239,28 +324,29 @@
             transition: all 0.2s ease;
             user-select: none;
             touch-action: manipulation;
+            box-shadow: var(--shadow-sm);
         }
 
         .action-button:active {
             transform: scale(0.98);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: var(--shadow-md);
         }
 
         .action-button:hover {
-            border-color: var(--color-text);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-color: var(--color-blue);
+            box-shadow: var(--shadow-md);
         }
 
         .action-button.add-new {
-            background-color: var(--color-blue);
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: var(--color-white);
-            border-color: var(--color-blue);
-            grid-column: 1 / -1;
+            border-color: transparent;
             min-height: 56px;
+            box-shadow: var(--shadow-md);
         }
 
         .action-button.add-new:hover {
-            border-color: var(--color-blue);
+            box-shadow: var(--shadow-lg);
         }
 
         .action-icon {
@@ -276,10 +362,10 @@
         /* Shift Overview Card */
         .shift-card {
             background-color: var(--color-white);
-            padding: 16px;
-            border-radius: 4px;
+            padding: 20px;
+            border-radius: 8px;
             margin-bottom: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-md);
         }
 
         .shift-header {
@@ -348,11 +434,24 @@
         }
 
         .team-member {
-            background-color: var(--color-bg);
-            padding: 8px 12px;
+            background-color: #e0e7ff;
+            padding: 8px 14px;
             border-radius: 20px;
             font-size: var(--font-size-small);
             font-weight: 500;
+            color: #3730a3;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .team-member {
+                background-color: rgba(59, 130, 246, 0.2);
+                color: #93c5fd;
+            }
+        }
+
+        html.dark-mode .team-member {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
         }
 
         /* Recent Activity Section */
@@ -368,13 +467,18 @@
 
         .activity-item {
             background-color: var(--color-white);
-            padding: 14px;
-            border-radius: 4px;
+            padding: 16px;
+            border-radius: 8px;
             border-left: 3px solid var(--color-blue);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-sm);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .activity-item:hover {
+            box-shadow: var(--shadow-md);
         }
 
         .activity-text {
@@ -399,7 +503,7 @@
             display: flex;
             border-top: 1px solid var(--color-light-gray);
             z-index: 99;
-            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.08);
             max-width: 600px;
             margin: 0 auto;
         }
@@ -450,7 +554,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(15, 23, 42, 0.6);
             z-index: 200;
             align-items: flex-end;
             justify-content: center;
@@ -464,8 +568,8 @@
             background-color: var(--color-white);
             width: 100%;
             max-width: 600px;
-            border-radius: 12px 12px 0 0;
-            padding: 20px;
+            border-radius: 16px 16px 0 0;
+            padding: 24px;
             max-height: 80vh;
             overflow-y: auto;
             animation: slideUp 0.3s ease;
@@ -507,6 +611,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .close-button:hover {
+            background-color: var(--color-bg);
         }
 
         .form-group {
@@ -522,32 +632,39 @@
         }
 
         .form-input {
-            padding: 12px;
+            padding: 12px 16px;
             border: 1px solid var(--color-border);
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: var(--font-size-normal);
             font-family: inherit;
             min-height: var(--touch-target);
+            background-color: var(--color-white);
+            transition: all 0.2s ease;
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--color-blue);
-            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         .submit-button {
-            background-color: var(--color-blue);
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: var(--color-white);
             padding: 14px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: var(--font-size-normal);
             font-weight: 600;
             cursor: pointer;
             margin-top: 20px;
             min-height: var(--touch-target);
             transition: all 0.2s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .submit-button:hover {
+            box-shadow: var(--shadow-lg);
         }
 
         .submit-button:active {
@@ -557,11 +674,12 @@
         /* Settings/Placeholder Styles */
         .placeholder-section {
             background-color: var(--color-white);
-            padding: 20px;
-            border-radius: 4px;
+            padding: 24px;
+            border-radius: 8px;
             text-align: center;
             color: var(--color-gray);
             margin: 20px 0;
+            box-shadow: var(--shadow-sm);
         }
 
         .placeholder-icon {
@@ -596,9 +714,9 @@
         .equipment-button {
             flex-shrink: 0;
             background-color: var(--color-white);
-            border: 2px solid var(--color-border);
-            padding: 10px 14px;
-            border-radius: 4px;
+            border: 1px solid var(--color-border);
+            padding: 10px 16px;
+            border-radius: 6px;
             font-size: var(--font-size-small);
             font-weight: 600;
             cursor: pointer;
@@ -606,12 +724,15 @@
             min-height: 40px;
             display: flex;
             align-items: center;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
         }
 
         .equipment-button.active {
-            background-color: var(--color-text);
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: var(--color-white);
-            border-color: var(--color-text);
+            border-color: transparent;
+            box-shadow: var(--shadow-md);
         }
 
         .parameter-toggle {
@@ -623,9 +744,9 @@
         .parameter-pill {
             flex: 1;
             background-color: var(--color-white);
-            border: 2px solid var(--color-border);
+            border: 1px solid var(--color-border);
             padding: 12px;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: var(--font-size-small);
             font-weight: 600;
             cursor: pointer;
@@ -634,24 +755,28 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
         }
 
         .parameter-pill.active {
-            background-color: var(--color-blue);
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: var(--color-white);
-            border-color: var(--color-blue);
+            border-color: transparent;
+            box-shadow: var(--shadow-md);
         }
 
         .chart-container {
             background-color: var(--color-white);
-            padding: 16px;
+            padding: 20px;
             border: 1px solid var(--color-border);
-            border-radius: 4px;
+            border-radius: 8px;
             margin-bottom: 20px;
             min-height: 280px;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: var(--shadow-sm);
         }
 
         .chart-svg {
@@ -661,13 +786,14 @@
 
         .stat-card {
             background-color: var(--color-white);
-            padding: 16px;
+            padding: 20px;
             border: 1px solid var(--color-border);
-            border-radius: 4px;
+            border-radius: 8px;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 12px;
             margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
         }
 
         .stat-item {
@@ -693,14 +819,15 @@
 
         /* SHIFT LOGBOOK STYLES */
         .shift-banner {
-            background-color: var(--color-text);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
             color: var(--color-white);
-            padding: 16px;
-            border-radius: 4px;
+            padding: 20px;
+            border-radius: 8px;
             margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: var(--shadow-md);
         }
 
         .shift-banner-left h2 {
@@ -721,10 +848,11 @@
 
         .team-roster {
             background-color: var(--color-white);
-            padding: 16px;
+            padding: 20px;
             border: 1px solid var(--color-border);
-            border-radius: 4px;
+            border-radius: 8px;
             margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
         }
 
         .roster-title {
@@ -746,10 +874,11 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid var(--color-light-gray);
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: var(--font-size-small);
+            background-color: #fafbfc;
         }
 
         .status-badge {
@@ -789,14 +918,19 @@
         .handover-note {
             background-color: var(--color-white);
             border-left: 4px solid var(--color-blue);
-            padding: 12px;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .handover-note:hover {
+            box-shadow: var(--shadow-md);
         }
 
         .handover-note.previous-shift {
-            background-color: #f9f9f9;
-            border-left-color: var(--color-light-gray);
+            background-color: #f8fafc;
+            border-left-color: var(--color-gray);
         }
 
         .note-header {
@@ -830,31 +964,37 @@
         }
 
         .end-shift-button {
-            background-color: var(--color-red);
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: var(--color-white);
             padding: 16px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: var(--font-size-normal);
             font-weight: 600;
             cursor: pointer;
             width: 100%;
             min-height: var(--touch-target);
             margin-top: 20px;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .end-shift-button:hover {
+            box-shadow: var(--shadow-lg);
         }
 
         .end-shift-button:active {
-            background-color: #b71c1c;
+            transform: scale(0.98);
         }
 
         /* SETTINGS TAB STYLES */
         .settings-card {
             background-color: var(--color-white);
-            padding: 16px;
+            padding: 20px;
             border: 1px solid var(--color-border);
-            border-radius: 4px;
+            border-radius: 8px;
             margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-sm);
         }
 
         .settings-section-title {
@@ -915,15 +1055,16 @@
             width: 100%;
             background-color: var(--color-white);
             color: var(--color-text);
-            border: 2px solid var(--color-border);
+            border: 1px solid var(--color-border);
             padding: 12px;
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: var(--font-size-normal);
             font-weight: 600;
             cursor: pointer;
             min-height: var(--touch-target);
             margin-top: 10px;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
         }
 
         .settings-action-button:active {
@@ -931,35 +1072,45 @@
         }
 
         .settings-action-button:hover {
-            border-color: var(--color-text);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border-color: var(--color-blue);
+            box-shadow: var(--shadow-md);
         }
 
         .settings-info-box {
-            background-color: #f9f9f9;
-            padding: 12px;
+            background-color: #f0f9ff;
+            padding: 12px 14px;
             border-left: 4px solid var(--color-blue);
-            border-radius: 4px;
+            border-radius: 6px;
             font-size: var(--font-size-small);
             margin-top: 12px;
             color: var(--color-text);
             line-height: 1.5;
         }
 
+        @media (prefers-color-scheme: dark) {
+            .settings-info-box {
+                background-color: rgba(59, 130, 246, 0.1);
+            }
+        }
+
+        html.dark-mode .settings-info-box {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
         /* RESOURCES TAB STYLES */
         .resource-section {
             margin-bottom: 12px;
             border: 1px solid var(--color-border);
-            border-radius: 4px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-sm);
         }
 
         .resource-header {
             width: 100%;
             background-color: var(--color-white);
             border: none;
-            padding: 14px;
+            padding: 16px;
             text-align: left;
             font-size: var(--font-size-normal);
             font-weight: 600;
@@ -968,10 +1119,11 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--color-light-gray);
+            transition: all 0.2s ease;
         }
 
         .resource-header:hover {
-            background-color: #f5f5f5;
+            background-color: #f8fafc;
         }
 
         .toggle-icon {
@@ -1088,6 +1240,322 @@
                 font-size: 1.1rem;
             }
         }
+
+        /* Tablet and Desktop Responsive */
+        @media (min-width: 768px) {
+            .app-container {
+                padding: 24px;
+            }
+
+            /* Two-column layout for home section */
+            #homeSection {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+            }
+
+            .alerts-section {
+                grid-column: 1 / -1;
+            }
+
+            .actions-section {
+                grid-column: 1 / -1;
+            }
+
+            .actions-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .shift-card {
+                grid-column: 1;
+            }
+
+            .activity-section {
+                grid-column: 2;
+            }
+
+            /* Wider chart */
+            .chart-container {
+                min-height: 350px;
+            }
+
+            .chart-svg {
+                height: 300px;
+            }
+        }
+
+        /* Large Desktop */
+        @media (min-width: 1024px) {
+            .app-container {
+                padding: 32px;
+            }
+
+            .actions-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+
+            #homeSection {
+                grid-template-columns: 1.5fr 1fr;
+            }
+
+            /* Three-column stats */
+            .stat-card {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Extra Large Desktop */
+        @media (min-width: 1440px) {
+            .app-container {
+                padding: 40px;
+            }
+
+            #homeSection {
+                grid-template-columns: 1.8fr 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        /* Operations Dashboard - Health Score Section */
+        .health-score-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .health-score-card {
+            background: var(--color-white);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid;
+            transition: all 0.2s ease;
+        }
+
+        .health-score-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .health-score-card.excellent {
+            border-color: var(--color-green);
+        }
+
+        .health-score-card.good {
+            border-color: var(--color-blue);
+        }
+
+        .health-score-card.warning {
+            border-color: var(--color-amber);
+        }
+
+        .health-score-card.critical {
+            border-color: var(--color-red);
+        }
+
+        .health-score-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .equipment-info {
+            flex: 1;
+        }
+
+        .equipment-status-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        .equipment-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .equipment-status-badge.operational {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-green);
+        }
+
+        .equipment-status-badge.maintenance {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-amber);
+        }
+
+        .equipment-status-badge.offline {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-red);
+        }
+
+        .equipment-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--color-light-gray);
+            font-size: 0.75rem;
+            color: var(--color-gray);
+        }
+
+        .equipment-meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .equipment-meta-label {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        .equipment-meta-value {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .equipment-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .equipment-id {
+            font-size: 0.75rem;
+            color: var(--color-gray);
+            margin-top: 2px;
+        }
+
+        .health-score {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .health-score-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .health-score-value.excellent {
+            color: var(--color-green);
+        }
+
+        .health-score-value.good {
+            color: var(--color-blue);
+        }
+
+        .health-score-value.warning {
+            color: var(--color-amber);
+        }
+
+        .health-score-value.critical {
+            color: var(--color-red);
+        }
+
+        .health-score-label {
+            font-size: 0.7rem;
+            color: var(--color-gray);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .health-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--color-light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .health-bar-fill {
+            height: 100%;
+            transition: width 1s ease;
+            border-radius: 4px;
+        }
+
+        .health-bar-fill.excellent {
+            background: linear-gradient(90deg, var(--color-green) 0%, #34d399 100%);
+        }
+
+        .health-bar-fill.good {
+            background: linear-gradient(90deg, var(--color-blue) 0%, var(--color-blue-light) 100%);
+        }
+
+        .health-bar-fill.warning {
+            background: linear-gradient(90deg, var(--color-amber) 0%, #fbbf24 100%);
+        }
+
+        .health-bar-fill.critical {
+            background: linear-gradient(90deg, var(--color-red) 0%, #f87171 100%);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 0.8rem;
+        }
+
+        .metric-label {
+            color: var(--color-gray);
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .metric-status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: 6px;
+        }
+
+        .metric-status.normal {
+            background: var(--color-green);
+        }
+
+        .metric-status.alert {
+            background: var(--color-amber);
+        }
+
+        .metric-status.critical {
+            background: var(--color-red);
+        }
+
+        .dashboard-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--color-light-gray);
+        }
     </style>
 </head>
 
@@ -1099,12 +1567,15 @@
             <div class="header-time" id="currentTime"></div>
         </div>
         <div class="header-right">
+            <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle dark mode" onclick="toggleDarkMode()">
+                🌙
+            </button>
             <div class="sync-indicator" id="syncStatus" title="Sync Status: Online">
                 ✓
             </div>
             <div class="user-badge">
                 <div class="user-avatar">A</div>
-                <div class="user-name">Ashwin</div>
+                <div class="user-name">David</div>
             </div>
         </div>
     </header>
@@ -1113,100 +1584,19 @@
     <div class="app-container">
         <!-- HOME SECTION -->
         <section id="homeSection" class="section active">
+            <!-- Operations Dashboard Title -->
+            <div class="dashboard-title" style="grid-column: 1 / -1;">⚡ Equipment Health Dashboard</div>
+
+            <!-- Health Score Cards -->
+            <div class="health-score-section" id="healthScoreContainer" style="grid-column: 1 / -1;">
+                <!-- Cards will be generated by JavaScript -->
+            </div>
+
             <!-- Priority Alerts -->
-            <div class="alerts-section">
-                <div class="alerts-title">Priority Alerts</div>
-                <div class="alert-card critical">
-                    <div class="alert-header">
-                        <div class="alert-title">133-PA-1001 B</div>
-                        <div class="alert-badge critical">CRITICAL</div>
-                    </div>
-                    <div class="alert-description">Critical Vibration detected on pump discharge line.</div>
-                    <div class="alert-reporter">Reported by Irfan S. • 07:30 AM</div>
-                </div>
-                <div class="alert-card warning">
-                    <div class="alert-header">
-                        <div class="alert-title">133-H-1001</div>
-                        <div class="alert-badge warning">WARNING</div>
-                    </div>
-                    <div class="alert-description">Pilot Flame indicator fluctuating. Manual check recommended.</div>
-                    <div class="alert-reporter">Reported by Vinkal • 08:15 AM</div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="actions-section">
-                <div class="alerts-title">Quick Actions</div>
-                <div class="actions-grid">
-                    <button class="action-button" onclick="navigateToEquipment('pump')">
-                        <div class="action-icon">💧</div>
-                        <div class="action-label">Pump Logs</div>
-                    </button>
-                    <button class="action-button" onclick="navigateToEquipment('compressor')">
-                        <div class="action-icon">⚙️</div>
-                        <div class="action-label">Compressor Logs</div>
-                    </button>
-                    <button class="action-button" onclick="navigateToEquipment('heater')">
-                        <div class="action-icon">🔥</div>
-                        <div class="action-label">Heater Logs</div>
-                    </button>
-                    <button class="action-button" onclick="navigateToEquipment('finfan')">
-                        <div class="action-icon">❄️</div>
-                        <div class="action-label">FinFan Logs</div>
-                    </button>
-                    <button class="action-button add-new" onclick="openAddEquipmentModal()">
-                        ➕ Add New Equipment
-                    </button>
-                </div>
-            </div>
-
-            <!-- Shift Overview -->
-            <div class="shift-card">
-                <div class="shift-header">
-                    <div class="shift-title">Current Shift</div>
-                    <div class="shift-time">06:00 - 14:00</div>
-                </div>
-                <div class="shift-details">
-                    <div class="shift-detail-item">
-                        <div class="shift-detail-label">Shift</div>
-                        <div class="shift-detail-value">Morning</div>
-                    </div>
-                    <div class="shift-detail-item">
-                        <div class="shift-detail-label">Operator</div>
-                        <div class="shift-detail-value">Ashwin</div>
-                    </div>
-                </div>
-                <div class="team-members">
-                    <div class="team-label">Team Members</div>
-                    <div class="team-list">
-                        <div class="team-member">👨 Irfan S. (Lead)</div>
-                        <div class="team-member">👨 Vinkal</div>
-                        <div class="team-member">👨 Piyush</div>
-                        <div class="team-member">👨 Mubashar</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Activity -->
-            <div class="activity-section">
-                <div class="alerts-title">Recent Activity</div>
-                <div class="activity-list">
-                    <div class="activity-item">
-                        <div class="activity-text">133-PA-1001 A recorded</div>
-                        <div class="activity-time">08:45 AM</div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-text">133-K-1001 reading logged</div>
-                        <div class="activity-time">08:30 AM</div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-text">133-H-1001 observation added</div>
-                        <div class="activity-time">08:00 AM</div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-text">Shift handover completed</div>
-                        <div class="activity-time">06:15 AM</div>
-                    </div>
+            <div class="alerts-section" style="grid-column: 1 / -1;">
+                <div class="alerts-title">Maintenance Alerts</div>
+                <div id="maintenanceAlertsContainer">
+                    <!-- Maintenance alerts will be generated by JavaScript -->
                 </div>
             </div>
         </section>
@@ -1288,7 +1678,7 @@
                     <p>06:00 - 14:00</p>
                 </div>
                 <div class="shift-lead">
-                    Lead: <strong>Irfan S.</strong>
+                    Lead: <strong>Obinna</strong>
                 </div>
             </div>
 
@@ -1298,19 +1688,19 @@
                 <div class="roster-list">
                     <div class="roster-member">
                         <span class="status-badge control"></span>
-                        Irfan S. (Lead)
+                        Obinna (Lead)
                     </div>
                     <div class="roster-member">
                         <span class="status-badge field"></span>
-                        Vinkal
+                        Emma
                     </div>
                     <div class="roster-member">
                         <span class="status-badge field"></span>
-                        Piyush
+                        Chinedu
                     </div>
                     <div class="roster-member">
                         <span class="status-badge control"></span>
-                        Mubashar
+                        Tobi
                     </div>
                 </div>
                 <div
@@ -1331,7 +1721,7 @@
                     </div>
                     <div class="note-text">Discharge pressure nominal at 72 PSI. Vibration levels stable. Continue
                         routine monitoring.</div>
-                    <div class="note-author">Logged by Ashwin</div>
+                    <div class="note-author">Logged by David</div>
                 </div>
 
                 <div class="handover-note">
@@ -1341,7 +1731,7 @@
                     </div>
                     <div class="note-text">Adjusted fuel gas valve. Pilot flame is now stable and showing consistent
                         ignition.</div>
-                    <div class="note-author">Logged by Vinkal</div>
+                    <div class="note-author">Logged by Emma</div>
                 </div>
 
                 <div class="handover-note">
@@ -1351,7 +1741,7 @@
                     </div>
                     <div class="note-text">Compressor outlet temp 85°C. Within spec. No unusual vibrations. Checked lube
                         oil level—acceptable.</div>
-                    <div class="note-author">Logged by Piyush</div>
+                    <div class="note-author">Logged by Chinedu</div>
                 </div>
 
                 <div class="handover-note">
@@ -1361,7 +1751,7 @@
                     </div>
                     <div class="note-text">Fan motor running smoothly. Cooling duty stable. All parameters nominal.
                     </div>
-                    <div class="note-author">Logged by Irfan S.</div>
+                    <div class="note-author">Logged by Obinna</div>
                 </div>
 
                 <div class="notes-section-title">Previous Shift Notes (Night Shift)</div>
@@ -1709,7 +2099,7 @@
                 <div class="settings-section-title">👤 User Profile</div>
                 <div class="settings-item">
                     <div class="settings-label">Current Operator</div>
-                    <div class="settings-value">Ashwin Kumar</div>
+                    <div class="settings-value">David Okafor</div>
                 </div>
                 <div class="settings-item">
                     <div class="settings-label">Assigned Shift</div>
@@ -1872,23 +2262,23 @@
 
     <!-- Bottom Tab Navigation -->
     <nav class="tab-navigation">
-        <button class="tab-button active" onclick="switchTab('home')">
+        <button class="tab-button active" onclick="switchTab('home', event)">
             <div class="tab-icon">🏠</div>
             <span>Home</span>
         </button>
-        <button class="tab-button" onclick="switchTab('trends')">
+        <button class="tab-button" onclick="switchTab('trends', event)">
             <div class="tab-icon">📈</div>
             <span>Trends</span>
         </button>
-        <button class="tab-button" onclick="switchTab('logbook')">
+        <button class="tab-button" onclick="switchTab('logbook', event)">
             <div class="tab-icon">📋</div>
             <span>Shift</span>
         </button>
-        <button class="tab-button" onclick="switchTab('resources')">
+        <button class="tab-button" onclick="switchTab('resources', event)">
             <div class="tab-icon">📚</div>
             <span>Resources</span>
         </button>
-        <button class="tab-button" onclick="switchTab('settings')">
+        <button class="tab-button" onclick="switchTab('settings', event)">
             <div class="tab-icon">⚙️</div>
             <span>Settings</span>
         </button>
@@ -1961,6 +2351,235 @@
     </div>
 
     <script>
+        // ===== OPERATIONS DASHBOARD EQUIPMENT DATA =====
+        const operationsDashboardEquipment = [
+            {
+                id: 'P-101',
+                name: 'Feed Pump A',
+                fullId: '133-PA-1001 A',
+                type: 'Centrifugal Pump',
+                healthScore: 98,
+                status: 'operational',
+                metrics: {
+                    vibration: { value: '2.1 mm/s', status: 'normal' },
+                    temperature: { value: '68°C', status: 'normal' },
+                    pressure: { value: '45 bar', status: 'normal' },
+                    flow: { value: '320 m³/h', status: 'normal' }
+                },
+                lastUpdated: '2 min ago',
+                nextMaintenance: '45 days'
+            },
+            {
+                id: 'P-102',
+                name: 'Feed Pump B',
+                fullId: '133-PA-1001 B',
+                type: 'Centrifugal Pump',
+                healthScore: 65,
+                status: 'maintenance',
+                metrics: {
+                    vibration: { value: '5.8 mm/s', status: 'critical' },
+                    temperature: { value: '82°C', status: 'alert' },
+                    pressure: { value: '42 bar', status: 'alert' },
+                    flow: { value: '280 m³/h', status: 'normal' }
+                },
+                lastUpdated: 'Just now',
+                nextMaintenance: '3 days'
+            },
+            {
+                id: 'C-201',
+                name: 'Main Compressor',
+                fullId: '133-K-1001',
+                type: 'Centrifugal Compressor',
+                healthScore: 85,
+                status: 'operational',
+                metrics: {
+                    vibration: { value: '3.8 mm/s', status: 'alert' },
+                    temperature: { value: '95°C', status: 'normal' },
+                    pressure: { value: '180 bar', status: 'normal' },
+                    power: { value: '450 kW', status: 'normal' }
+                },
+                lastUpdated: '1 min ago',
+                nextMaintenance: '12 days'
+            },
+            {
+                id: 'H-301',
+                name: 'Process Heater',
+                fullId: '133-H-1001',
+                type: 'Fired Heater',
+                healthScore: 92,
+                status: 'operational',
+                metrics: {
+                    efficiency: { value: '87%', status: 'normal' },
+                    temperature: { value: '850°C', status: 'normal' },
+                    pressure: { value: '12 bar', status: 'normal' },
+                    fuel: { value: '450 kg/h', status: 'normal' }
+                },
+                lastUpdated: '3 min ago',
+                nextMaintenance: '30 days'
+            },
+            {
+                id: 'F-401',
+                name: 'Cooling Fan B',
+                fullId: '133-FAN-1002',
+                type: 'Air Fin Cooler',
+                healthScore: 88,
+                status: 'operational',
+                metrics: {
+                    vibration: { value: '3.2 mm/s', status: 'normal' },
+                    temperature: { value: '42°C', status: 'normal' },
+                    speed: { value: '1450 RPM', status: 'normal' },
+                    power: { value: '28 kW', status: 'normal' }
+                },
+                lastUpdated: '5 min ago',
+                nextMaintenance: '20 days'
+            },
+            {
+                id: 'P-103',
+                name: 'Recycle Pump',
+                fullId: '133-PA-1002 A',
+                type: 'Centrifugal Pump',
+                healthScore: 94,
+                status: 'operational',
+                metrics: {
+                    vibration: { value: '2.5 mm/s', status: 'normal' },
+                    temperature: { value: '72°C', status: 'normal' },
+                    pressure: { value: '38 bar', status: 'normal' },
+                    flow: { value: '280 m³/h', status: 'normal' }
+                },
+                lastUpdated: '4 min ago',
+                nextMaintenance: '60 days'
+            }
+        ];
+
+        const maintenanceAlertsData = [
+            {
+                priority: 'critical',
+                title: '133-PA-1001 B - Critical Vibration',
+                description: 'Critical Vibration detected on pump discharge line. Immediate inspection required.',
+                equipment: 'P-102',
+                reporter: 'Obinna',
+                time: '07:30 AM'
+            },
+            {
+                priority: 'warning',
+                title: '133-K-1001 - Maintenance Due',
+                description: 'Scheduled maintenance approaching in 12 days. Plan shutdown window.',
+                equipment: 'C-201',
+                reporter: 'Emma',
+                time: '1 hour ago'
+            },
+            {
+                priority: 'warning',
+                title: '133-H-1001 - Pilot Flame Fluctuation',
+                description: 'Pilot Flame indicator fluctuating. Manual check recommended.',
+                equipment: 'H-301',
+                reporter: 'Emma',
+                time: '08:15 AM'
+            }
+        ];
+
+        // Render health score cards
+        function renderHealthScoreCards() {
+            const container = document.getElementById('healthScoreContainer');
+            if (!container) return;
+
+            container.innerHTML = operationsDashboardEquipment.map(equipment => {
+                const healthClass = getHealthClass(equipment.healthScore);
+                const metricsEntries = Object.entries(equipment.metrics);
+
+                return `
+                    <div class="health-score-card ${healthClass}">
+                        <div class="health-score-header">
+                            <div class="equipment-info">
+                                <div class="equipment-name">${equipment.name}</div>
+                                <div class="equipment-id">${equipment.fullId} • ${equipment.type}</div>
+                                <div class="equipment-status-row">
+                                    <span class="equipment-status-badge ${equipment.status}">${capitalize(equipment.status)}</span>
+                                </div>
+                            </div>
+                            <div class="health-score">
+                                <span class="health-score-value ${healthClass}">${equipment.healthScore}</span>
+                                <span class="health-score-label">Health Score</span>
+                            </div>
+                        </div>
+                        <div class="health-bar">
+                            <div class="health-bar-fill ${healthClass}" style="width: ${equipment.healthScore}%"></div>
+                        </div>
+                        <div class="metrics-grid">
+                            ${metricsEntries.map(([key, metric]) => `
+                                <div class="metric-item">
+                                    <span class="metric-label">${capitalize(key)}</span>
+                                    <span class="metric-value">
+                                        ${metric.value}
+                                        <span class="metric-status ${metric.status}"></span>
+                                    </span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="equipment-meta">
+                            <div class="equipment-meta-item">
+                                <span class="equipment-meta-label">Last Updated</span>
+                                <span class="equipment-meta-value">${equipment.lastUpdated}</span>
+                            </div>
+                            <div class="equipment-meta-item">
+                                <span class="equipment-meta-label">Next Maintenance</span>
+                                <span class="equipment-meta-value">${equipment.nextMaintenance}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render maintenance alerts
+        function renderMaintenanceAlerts() {
+            const container = document.getElementById('maintenanceAlertsContainer');
+            if (!container) return;
+
+            container.innerHTML = maintenanceAlertsData.map(alert => {
+                return `
+                    <div class="alert-card ${alert.priority}">
+                        <div class="alert-header">
+                            <div class="alert-title">${alert.title}</div>
+                            <div class="alert-badge ${alert.priority}">${alert.priority.toUpperCase()}</div>
+                        </div>
+                        <div class="alert-description">${alert.description}</div>
+                        <div class="alert-reporter">Reported by ${alert.reporter} • ${alert.time}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Helper function to get health class
+        function getHealthClass(score) {
+            if (score >= 95) return 'excellent';
+            if (score >= 85) return 'good';
+            if (score >= 70) return 'warning';
+            return 'critical';
+        }
+
+        // Helper function to capitalize strings
+        function capitalize(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Simulate real-time updates for dashboard
+        function simulateRealTimeUpdates() {
+            setInterval(() => {
+                // Randomly update a health score
+                const randomIndex = Math.floor(Math.random() * operationsDashboardEquipment.length);
+                const variation = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+                operationsDashboardEquipment[randomIndex].healthScore = Math.max(65, Math.min(100, operationsDashboardEquipment[randomIndex].healthScore + variation));
+
+                // Update last updated time
+                operationsDashboardEquipment[randomIndex].lastUpdated = 'Just now';
+
+                // Re-render
+                renderHealthScoreCards();
+            }, 8000); // Update every 8 seconds
+        }
+
         // ===== COMPREHENSIVE EQUIPMENT DATABASE =====
         const equipmentDatabase = {
             pump: {
@@ -2107,7 +2726,7 @@
         }
 
         // ===== TAB NAVIGATION =====
-        function switchTab(tabName) {
+        function switchTab(tabName, event) {
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
@@ -2131,7 +2750,9 @@
                 }
             }
 
-            event.target.closest('.tab-button').classList.add('active');
+            if (event) {
+                event.target.closest('.tab-button').classList.add('active');
+            }
         }
 
         // ===== TRENDS TAB FUNCTIONS =====
@@ -2196,7 +2817,7 @@
                 gridLine.setAttribute('y1', y);
                 gridLine.setAttribute('x2', svgWidth - padding.right);
                 gridLine.setAttribute('y2', y);
-                gridLine.setAttribute('stroke', '#f0f0f0');
+                gridLine.setAttribute('stroke', getGridColor());
                 gridLine.setAttribute('stroke-width', '1');
                 svg.appendChild(gridLine);
             }
@@ -2211,7 +2832,7 @@
                 lineEl.setAttribute('y1', line.y);
                 lineEl.setAttribute('x2', svgWidth - padding.right);
                 lineEl.setAttribute('y2', line.y);
-                lineEl.setAttribute('stroke', '#bbb');
+                lineEl.setAttribute('stroke', getLineColor());
                 lineEl.setAttribute('stroke-dasharray', '4,4');
                 lineEl.setAttribute('stroke-width', '1');
                 svg.appendChild(lineEl);
@@ -2225,7 +2846,7 @@
 
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('d', pathData);
-            path.setAttribute('stroke', '#000');
+            path.setAttribute('stroke', getTextColor());
             path.setAttribute('stroke-width', '2.5');
             path.setAttribute('fill', 'none');
             path.setAttribute('stroke-linecap', 'round');
@@ -2238,7 +2859,7 @@
                 circle.setAttribute('cx', valueToX(i));
                 circle.setAttribute('cy', valueToY(value));
                 circle.setAttribute('r', '3');
-                circle.setAttribute('fill', '#000');
+                circle.setAttribute('fill', getTextColor());
                 svg.appendChild(circle);
             });
 
@@ -2248,7 +2869,7 @@
             yAxis.setAttribute('y1', padding.top);
             yAxis.setAttribute('x2', padding.left);
             yAxis.setAttribute('y2', svgHeight - padding.bottom);
-            yAxis.setAttribute('stroke', '#000');
+            yAxis.setAttribute('stroke', getTextColor());
             yAxis.setAttribute('stroke-width', '2');
             svg.appendChild(yAxis);
 
@@ -2258,7 +2879,7 @@
             xAxis.setAttribute('y1', svgHeight - padding.bottom);
             xAxis.setAttribute('x2', svgWidth - padding.right);
             xAxis.setAttribute('y2', svgHeight - padding.bottom);
-            xAxis.setAttribute('stroke', '#000');
+            xAxis.setAttribute('stroke', getTextColor());
             xAxis.setAttribute('stroke-width', '2');
             svg.appendChild(xAxis);
 
@@ -2272,7 +2893,7 @@
                 text.setAttribute('y', y + 4);
                 text.setAttribute('text-anchor', 'end');
                 text.setAttribute('font-size', '11px');
-                text.setAttribute('fill', '#000');
+                text.setAttribute('fill', getTextColor());
                 text.textContent = value.toFixed(0);
                 svg.appendChild(text);
             }
@@ -2285,7 +2906,7 @@
                 text.setAttribute('y', svgHeight - padding.bottom + 20);
                 text.setAttribute('text-anchor', 'middle');
                 text.setAttribute('font-size', '11px');
-                text.setAttribute('fill', '#000');
+                text.setAttribute('fill', getTextColor());
                 text.textContent = timeLabel(i);
                 svg.appendChild(text);
             });
@@ -2297,7 +2918,7 @@
             yLabel.setAttribute('text-anchor', 'middle');
             yLabel.setAttribute('font-size', '12px');
             yLabel.setAttribute('font-weight', '600');
-            yLabel.setAttribute('fill', '#000');
+            yLabel.setAttribute('fill', getTextColor());
             yLabel.setAttribute('transform', 'rotate(-90)');
             yLabel.textContent = baseline.unit;
             svg.appendChild(yLabel);
@@ -2309,7 +2930,7 @@
             xLabel.setAttribute('text-anchor', 'middle');
             xLabel.setAttribute('font-size', '12px');
             xLabel.setAttribute('font-weight', '600');
-            xLabel.setAttribute('fill', '#000');
+            xLabel.setAttribute('fill', getTextColor());
             xLabel.textContent = 'Time (Hours)';
             svg.appendChild(xLabel);
 
@@ -2445,7 +3066,7 @@
         }
 
         function handleViewLogs() {
-            alert('📋 Debug Logs\n\n[2026-02-11 12:45:30] App started\n[2026-02-11 12:45:31] Loaded 16 equipment units\n[2026-02-11 12:46:00] User logged in: Ashwin\n[2026-02-11 12:47:15] Synced 3 new readings\n[2026-02-11 12:48:42] Offline mode activated\n[2026-02-11 12:49:30] Saved reading: 133-PA-1001 A\n\n\nYou can export these logs for troubleshooting.');
+            alert('📋 Debug Logs\n\n[2026-02-11 12:45:30] App started\n[2026-02-11 12:45:31] Loaded 16 equipment units\n[2026-02-11 12:46:00] User logged in: David\n[2026-02-11 12:47:15] Synced 3 new readings\n[2026-02-11 12:48:42] Offline mode activated\n[2026-02-11 12:49:30] Saved reading: 133-PA-1001 A\n\n\nYou can export these logs for troubleshooting.');
         }
 
         function handleResetApp() {
@@ -2539,6 +3160,62 @@
             });
         }
 
+        // ===== DARK MODE TOGGLE =====
+        function getTextColor() {
+            return document.documentElement.classList.contains('dark-mode') ? '#e2e8f0' : '#0f172a';
+        }
+
+        function getGridColor() {
+            return document.documentElement.classList.contains('dark-mode') ? '#334155' : '#f0f0f0';
+        }
+
+        function getLineColor() {
+            return document.documentElement.classList.contains('dark-mode') ? '#64748b' : '#bbb';
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const isDarkMode = html.classList.contains('dark-mode');
+            const button = document.getElementById('darkModeToggle');
+
+            if (isDarkMode) {
+                html.classList.remove('dark-mode');
+                button.textContent = '🌙';
+                localStorage.setItem('darkMode', 'false');
+            } else {
+                html.classList.add('dark-mode');
+                button.textContent = '☀️';
+                localStorage.setItem('darkMode', 'true');
+            }
+
+            // Re-render chart with new colors
+            renderChart();
+        }
+
+        function initializeDarkMode() {
+            const html = document.documentElement;
+            const button = document.getElementById('darkModeToggle');
+            const savedDarkMode = localStorage.getItem('darkMode');
+
+            // Check if user has a saved preference
+            if (savedDarkMode === 'true') {
+                html.classList.add('dark-mode');
+                button.textContent = '☀️';
+            } else if (savedDarkMode === 'false') {
+                html.classList.remove('dark-mode');
+                button.textContent = '🌙';
+            } else {
+                // Use system preference if no saved preference
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (prefersDark) {
+                    html.classList.add('dark-mode');
+                    button.textContent = '☀️';
+                } else {
+                    button.textContent = '🌙';
+                }
+            }
+        }
+
         // ===== EVENT LISTENERS =====
         document.addEventListener('click', function (event) {
             if (event.target.classList.contains('modal')) {
@@ -2556,8 +3233,13 @@
 
         // Initial setup on page load
         window.addEventListener('load', function () {
+            initializeDarkMode();
             initializeEquipmentSelector();
             renderChart();
+            // Initialize Operations Dashboard
+            renderHealthScoreCards();
+            renderMaintenanceAlerts();
+            simulateRealTimeUpdates();
         });
     </script>
 </body>
